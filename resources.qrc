@@ -1,0 +1,6 @@
+<RCC>
+    <qresource prefix="/">
+        <file>stylesheet_darkgray.qss</file>
+        <file>targetlists.xml</file>
+    </qresource>
+</RCC>

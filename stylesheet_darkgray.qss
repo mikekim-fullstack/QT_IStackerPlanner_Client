@@ -1,0 +1,776 @@
+QSplitter::handle#main_widget {
+    background-color:  #1e1e1e;
+     }
+QWidget#main_widget {
+    background-color: #1e1e1e;
+    padding: 0 0 0 0;
+    margin: 0px;
+}
+
+QWidget#menu_widget {
+    background-color: #1e1e1e;
+    padding: 100 100 20 10;
+    margin: 0px;
+}
+QWidget#left_widget {
+    background-color: #232323;
+    padding: 100 100 20 10;
+    margin: 0px;
+}
+QWidget#home_widget {
+    background-color: #2d2d2d;
+    padding: 0 0 0 0;
+    margin: 0px;
+}
+QWidget#calibration_widget {
+    background-color: #2d2d2d;
+    padding: 0 0 0 0;
+    margin: 0px;
+}
+QWidget#motionPlan_widget {
+    background-color: #2d2d2d;
+    padding: 0 0 0 0;
+    margin: 0px;
+}
+QWidget#operation_widget {
+    background-color: #2d2d2d;
+    padding: 0 0 0 0;
+    margin: 0px;
+}
+QWidget#setup_widget {
+    background-color: #2d2d2d;
+    padding: 0 0 0 0;
+    margin: 0px;
+}
+QPushButton#menu_button {
+    color: #646464;
+    background-color: #232323;
+    border-style: outset;
+    border-width: 0px;
+    border-color: rgb(50,50,60);
+    min-height: 40px;
+}
+
+QPushButton#menu_selected_button {
+    color: #b3b3b3;
+    background-color: #3c3c3c;
+    border-style: outset;
+    border-width: 0px;
+    border-color: rgb(50,50,60);
+    min-height: 60px;
+}
+QPushButton#power_on_button {
+    color: rgb(255,0,0);
+    background-color:  #232323;
+    border-style: outset;
+    border-width: 0px;
+    border-color: rgb(50,50,60);
+    min-height: 50px;
+}
+
+QPushButton#power_off_button {
+    color:  rgb(0,255,0);
+    background-color: #232323;
+    border-style: outset;
+    border-width: 0px;
+    border-color: rgb(50,50,60);
+    min-height: 50px;
+}
+QPushButton#exit_button {
+    color: #949494;
+    background-color: #232323;
+    border-style: outset;
+    border-width: 0px;
+    border-color: rgb(50,50,60);
+    min-height: 50px;
+}
+
+
+QStactedWidget {
+    background-color: #646464;
+    padding: 0 0 0 0;
+    margin: 0px;
+}
+
+QLabel#joint1_label {
+    color: #7f7f7f;
+    background-color: #232323;
+    padding: 4 0 4 0;
+    border: 1px;
+    border-radius: 10px;
+    margin-top: 0px;
+}
+QLabel#joint_label {
+    color: #7f7f7f;
+    background-color: #232323;
+    padding: 4 0 4 0;
+    border: 1px;
+    border-radius: 10px;
+    margin-top: 0px;
+}
+/* ----------------------------------------- */
+
+QSlider#joint1_slider {
+    margin-top: 0;
+}
+QSlider#joint1_slider::groove:horizontal {
+   /* border: 1px solid #999999;
+    height: 8px;  the groove expands to the size of the slider by default. by giving it a height, it has a fixed size
+    background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #505050, stop:1 #505050);
+    margin: 2px 0;
+    */
+    background-color: #505050;
+
+    height: 8px;
+    border-radius: 4px;
+}
+
+QSlider#joint1_slider::handle:horizontal {
+    /*
+    background: qlineargradient(x1:0, y1:0, x2:1, y2:1, stop:0 #8f8f8f, stop:1 #8f8f8f);
+    border: 1px solid #5c5c5c;
+
+    margin: -2px 0;  handle is placed by default on the contents rect of the groove. Expand outside the groove
+    border-radius: 6px;
+    */
+    background-color: #8f8f8f;
+    border: 2px solid #8f8f8f;
+    width: 8px;
+    height: 20px;
+   /* line-height: 20px;*/
+    margin-top: -2px;
+    margin-bottom: -2px;
+    border-radius: 4px;
+}
+QSlider#joint1_slider::handle:horizontal:hover {
+        border-radius: 4px;
+}
+
+/* ----------------------------------------- */
+QSlider#joint_slider {
+    margin-top: 2;
+}
+QSlider#joint_slider::groove:horizontal {
+   /* border: 1px solid #999999;
+    height: 8px;  the groove expands to the size of the slider by default. by giving it a height, it has a fixed size
+    background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #505050, stop:1 #505050);
+    margin: 2px 0;
+    */
+    background-color: #505050;
+
+    height: 8px;
+    border-radius: 4px;
+}
+
+QSlider#joint_slider::handle:horizontal {
+    /*
+    background: qlineargradient(x1:0, y1:0, x2:1, y2:1, stop:0 #8f8f8f, stop:1 #8f8f8f);
+    border: 1px solid #5c5c5c;
+
+    margin: -2px 0;  handle is placed by default on the contents rect of the groove. Expand outside the groove
+    border-radius: 6px;
+    */
+    background-color: #8f8f8f;
+    border: 2px solid #8f8f8f;
+    width: 8px;
+    height: 20px;
+   /* line-height: 20px;*/
+    margin-top: -2px;
+    margin-bottom: -2px;
+    border-radius: 4px;
+}
+QSlider#joint_slider::handle:horizontal:hover {
+        border-radius: 4px;
+}
+QLineEdit#joint1_ang_edit {
+    color: #787878;
+    background-color: #2d2d2d;
+    border: 1px;
+    border-radius: 0px;
+    padding: 4 0 4 0;
+     margin-top: 10px;
+}
+QLineEdit#joint_ang_edit {
+    color: #787878;
+    background-color: #2d2d2d;
+    border: 1px;
+    border-radius: 0px;
+    padding: 4 0 4 0;
+     margin-top: 0px;
+}
+QPushButton#joint_button {
+    color: #646464;
+    background-color: #2d2d2d;
+    border-style: outset;
+    border-width: 0px;
+    border-color: rgb(50,50,60);
+    min-height: 20px;
+    padding: 4 10 4 10;
+    margin-top: 2px;
+}
+QPushButton#joint_button:pressed {
+    background-color: #323232;
+}
+QLabel#tool1_dir_label {
+    color: #7f7f7f;
+    background-color: #232323;
+    padding: 4 10 4 10;
+    border: 1px;
+    border-radius: 10px;
+    margin-top: 12px;
+}
+QLabel#tool_dir_label {
+    color: #7f7f7f;
+    background-color: #232323;
+    padding: 4 10 4 10;
+    border: 1px;
+    border-radius: 10px;
+    margin-top: 0px;
+}
+QLineEdit#tool1_dir_edit {
+    color: #787878;
+    background-color: #2d2d2d;
+    border: 1px;
+    border-radius: 0px;
+    padding: 4 10 4 10;
+    margin-top: 12px;
+}
+QLineEdit#tool_dir_edit {
+    color: #787878;
+    background-color: #2d2d2d;
+    border: 1px;
+    border-radius: 0px;
+    padding: 4 10 4 10;
+    margin-top: 0px;
+}
+QPushButton#tool1_dir_leftbutton {
+    color: #7f7f7f;
+    background-color: #2d2d2d;
+    border-style: outset;
+    border-width: 0px;
+    border-color: rgb(50,50,60);
+    min-height: 20px;
+    padding: 4 10 4 10;
+    margin-top: 12px;
+}
+QPushButton#tool_dir_leftbutton {
+    color: #7f7f7f;
+    background-color: #2d2d2d;
+    border-style: outset;
+    border-width: 0px;
+    border-color: rgb(50,50,60);
+    min-height: 20px;
+    padding: 4 10 4 10;
+    margin-top: 0px;
+}
+QPushButton#tool1_dir_leftbutton:pressed {
+    background-color: #323232;
+}
+
+QPushButton#tool_dir_leftbutton:pressed {
+    background-color: #323232;
+}
+QPushButton#tool1_dir_rightbutton {
+    color: #7f7f7f;
+    background-color: #2d2d2d;
+    border-style: outset;
+    border-width: 0px;
+    border-color: rgb(50,50,60);
+    min-height: 20px;
+    padding: 4 10 4 10;
+    margin-top: 12px;
+}
+QPushButton#tool_dir_rightbutton {
+    color: #7f7f7f;
+    background-color: #2d2d2d;
+    border-style: outset;
+    border-width: 0px;
+    border-color: rgb(50,50,60);
+    min-height: 20px;
+    padding: 4 10 4 10;
+    margin-top: 0px;
+}
+QPushButton#tool1_dir_rightbutton:pressed {
+    background-color: #323232;
+}
+QPushButton#tool_dir_rightbutton:pressed {
+    background-color: #323232;
+}
+
+QGroupBox#joint_left_groupbox{
+    color: #828282;
+    border: 0px solid #828282;
+    font-size: 15px;
+
+}
+QGroupBox#joint_left_groupbox:title
+{
+
+
+}
+QGroupBox#tool_left_groupbox{
+    color: #828282;
+    border: 0px solid #828282;
+    font-size: 15px;
+}
+QGroupBox#tool_left_groupbox::title
+{
+   /*
+   subcontrol-origin: margin;
+    subcontrol-position: top left;
+    padding: 5 5px;
+    */
+}
+
+
+QGroupBox#robot_config_groupbox{
+    color: #828282;
+     border: 0px solid #828282;
+    font-size: 15px;
+}
+QGroupBox#robot_config_groupbox::title
+{
+    /*
+    subcontrol-origin: margin;
+    subcontrol-position: top left;
+    padding: 5 5px;
+    */
+}
+
+QCheckBox#config1_checkbox {
+    color:  #828282;
+    padding: 5 10 5 10px;
+    margin-top: 12px;
+}
+QCheckBox#config_checkbox {
+    color:  #828282;
+    padding: 5 10 5 10px;
+    margin-top: 0px;
+}
+QCheckBox#config1_checkbox::indicator {
+    color:  #828282;
+    padding: 5 10 5 10px;
+    border-radius: 3px;
+}
+QCheckBox#config_checkbox::indicator {
+    color:  #828282;
+    padding: 5 10 5 10px;
+    border-radius: 3px;
+}
+QCheckBox#config1_checkbox::indicator:unchecked  {
+    background-color: #2d2d2d;
+}
+QCheckBox#config_checkbox::indicator:unchecked  {
+    background-color: #2d2d2d;
+}
+QCheckBox#config1_checkbox::indicator:checked  {
+    background-color: #505050;
+    color: black;
+}
+
+QCheckBox#config_checkbox::indicator:checked  {
+    background-color: #505050;
+    color: black;
+}
+QPushButton#config1_button {
+    color: #505050;
+    background-color: #2d2d2d;
+    border-style: outset;
+    border-width: 0px;
+    border-color: rgb(50,50,60);
+    min-height: 20px;
+    padding: 4 10 4 10;
+    margin-top: 12px;
+}
+QPushButton#config_button {
+    color: #505050;
+    background-color: #2d2d2d;
+    border-style: outset;
+    border-width: 0px;
+    border-color: rgb(50,50,60);
+    min-height: 20px;
+    padding: 4 10 4 10;
+    margin-top: 0px;
+}
+QPushButton#config1_button:pressed {
+    background-color: #323232;
+}
+QPushButton#config_button:pressed {
+    background-color: #323232;
+}
+QPushButton#config1_applybutton {
+    color: #505050;
+    background-color: #2d2d2d;
+    border-style: outset;
+    border-width: 0px;
+    border-color: rgb(50,50,60);
+    min-height: 20px;
+    padding: 4 10 4 10;
+    margin-top: 12px;
+}
+QPushButton#config_applybutton {
+    color: #505050;
+    background-color: #2d2d2d;
+    border-style: outset;
+    border-width: 0px;
+    border-color: rgb(50,50,60);
+    min-height: 20px;
+    padding: 4 10 4 10;
+    margin-top: 0px;
+}
+QPushButton#config1_applybutton:pressed {
+    background-color: #323232;
+}
+QPushButton#config_applybutton:pressed {
+    background-color: #323232;
+}
+/* ++++++++++++++++++++++++++++ Operation Button +++++++++++++++++++++ */
+QPushButton#operation_stop_button {
+    color: red;
+    background-color: #202020;
+    border-style: solid;
+    border-width:4px;
+    border-radius:50px;
+    border-color: #b70000;
+    max-width:100px;
+    max-height:100px;
+    min-width:100px;
+    min-height:100px;
+    margin-top: 20px;
+}
+QPushButton#operation_stop_button:pressed {
+    background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
+                                      stop: 0 #202020, stop: 1 #510000);
+}
+QPushButton#operation_button {
+    color: #d3d3d3;
+    background-color: #3a3a3a;
+    border-style: solid;
+    border-width:2px;
+    border-radius:50px;
+    border-color: #1ab900;
+    max-width:100px;
+    max-height:100px;
+    min-width:100px;
+    min-height:100px;
+    margin-top: 20px;
+}
+QPushButton#operation_button:pressed {
+    background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
+                                      stop: 0 #3a3a3a, stop: 1 #1ab900);
+}
+QPushButton#operation_selected_button {
+    color: #d3d3d3;
+    background-color: #024d09;
+    border-style: solid;
+    border-width:2px;
+    border-radius:50px;
+    border-color: #1ab900;
+    max-width:100px;
+    max-height:100px;
+    min-width:100px;
+    min-height:100px;
+    margin-top: 20px;
+}
+QPushButton#operation_selected_button:pressed {
+    background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
+                                      stop: 0 #3a3a3a, stop: 1 #1ab900);
+}
+/* ++++++++++++++++++++++++++++++  UP & Down about X-axis in Operation Mode ++++++++++++++++++++++++++++++ */
+QPushButton#operation_up_button {
+    color: #d3d3d3;
+    background-color: #202020;
+    border-style: solid;
+    border-width:4px;
+    border-radius:25px;
+    border-color: #ffff00;
+    max-width:50px;
+    max-height:50px;
+    min-width:50px;
+    min-height:50px;
+    margin-top: 0px;
+}
+QPushButton#operation_up_button:pressed {
+    background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
+                                      stop: 0 #202020, stop: 1 #1ab900);
+}
+QPushButton#operation_down_button {
+    color: #d3d3d3;
+    background-color: #202020;
+    border-style: solid;
+    border-width:4px;
+    border-radius:25px;
+    border-color: #ffff00;
+    max-width:50px;
+    max-height:50px;
+    min-width:50px;
+    min-height:50px;
+    margin-top: 0px;
+}
+QPushButton#operation_down_button:pressed {
+    background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
+                                      stop: 0 #202020, stop: 1 #1ab900);
+}
+QLabel#logo {
+    /*background-image: url(:/mirus_logo.png);*/
+    background-origin: content;
+}
+/* ---------------------  UP & Down about X-axis in Operation Mode-------------------------- */
+
+/* ---------------------  Setup Mode-------------------------- */
+/* ++++ IP Address ++++ */
+QGroupBox#ip_address_groupbox{
+    color: #828282;
+    border: 0px solid #828282;
+    font-size: 15px;
+}
+QGroupBox#ip_address_groupbox::title
+{
+   /*
+   subcontrol-origin: margin;
+    subcontrol-position: top left;
+    padding: 5 5px;
+    */
+}
+QLabel#ip_address_label {
+    color: #7f7f7f;
+    background-color: #232323;
+    padding: 4 0 4 0;
+    border: 1px;
+    border-radius: 10px;
+    margin-top: 10px;
+}
+QLineEdit#ip_address_edit {
+    color: #787878;
+    background-color: #2d2d2d;
+    border: 1px;
+    border-radius: 0px;
+    padding: 4 0 4 0;
+     margin-top: 10px;
+}
+QPushButton#ip_address_button {
+    color: #646464;
+    background-color: #2d2d2d;
+    border-style: outset;
+    border-width: 0px;
+    border-color: rgb(50,50,60);
+    min-height: 20px;
+    padding: 4 10 4 10;
+    margin-top: 10px;
+}
+QPushButton#ip_address_button:pressed {
+    background-color: #323232;
+}
+/* ++++ Tool X position setup ++++ */
+QGroupBox#robot_tool_pos_groupbox{
+    color: #828282;
+    border: 0px solid #828282;
+    font-size: 15px;
+}
+QGroupBox#robot_tool_pos_groupbox::title
+{
+   /*
+   subcontrol-origin: margin;
+    subcontrol-position: top left;
+    padding: 5 5px;
+    */
+}
+QLabel#robot_tool_pos_label {
+    color: #7f7f7f;
+    background-color: #232323;
+    padding: 4 0 4 0;
+    border: 1px;
+    border-radius: 10px;
+    margin-top: 10px;
+}
+QLineEdit#robot_tool_pos_edit {
+    color: #787878;
+    background-color: #2d2d2d;
+    border: 1px;
+    border-radius: 0px;
+    padding: 4 0 4 0;
+     margin-top: 10px;
+}
+QPushButton#robot_tool_pos_button {
+    color: #646464;
+    background-color: #2d2d2d;
+    border-style: outset;
+    border-width: 0px;
+    border-color: rgb(50,50,60);
+    min-height: 20px;
+    padding: 4 10 4 10;
+    margin-top: 10px;
+}
+QPushButton#robot_tool_pos_button:pressed {
+    background-color: #323232;
+}
+/* ++++++++++++++++++++++ QMessageBox ++++++++++++++++++++++++++++++ */
+QMessageBox {
+    background-color: #2d2d2d;
+}
+
+QMessageBox QPushButton{
+    color: #999999;
+    background-color: #2d2d2d;
+    border-style: outset;
+    border-width: 0px;
+    border-color: rgb(50,50,60);
+    min-height: 20px;
+    padding: 4 10 4 10;
+    margin-top: 10px;
+}
+QMessageBox QLabel {
+    color: #999999;
+}
+/* ++++++++++++++++++++++++++++++++++ Navigation Display ++++++++++++++++++++++++++++++ */
+QWidget#nav_display {
+     background-color: #2d2d2d;
+}
+QLabel#nav_display{
+    color: #B0B000;
+    font-size: 12px;
+}
+/* ++++++++++++++++++++++++++++++++ Calibration Widget +++++++++++++++++++++++++++++++++ */
+QPushButton#calibration_stop_button {
+    color: red;
+    background-color: #202020;
+    border-style: solid;
+    border-width:4px;
+    border-radius:50px;
+    border-color: #b70000;
+    max-width:100px;
+    max-height:100px;
+    min-width:100px;
+    min-height:100px;
+    margin-top: 20px;
+    font-size: 17px;
+}
+QPushButton#calibration_stop_button:pressed {
+    background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
+                                      stop: 0 #202020, stop: 1 #510000);
+}
+QPushButton#calibration_button {
+    color: #d3d3d3;
+    background-color: #3a3a3a;
+    border-style: solid;
+    border-width:2px;
+    border-radius:30px;
+    border-color: #1ab900;
+    max-width:200px;
+    max-height:60px;
+    min-width:200px;
+    min-height:60px;
+    margin-top: 20px;
+    font-size: 17px;
+}
+QPushButton#calibration_button:pressed {
+    background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
+                                      stop: 0 #3a3a3a, stop: 1 #1ab900);
+}
+QPushButton#calibration_selected_button {
+    color: #d3d3d3;
+    background-color: #024d09;
+    border-style: solid;
+    border-width:2px;
+    border-radius:30px;
+    border-color: #1ab900;
+    max-width:200px;
+    max-height:60px;
+    min-width:200px;
+    min-height:60px;
+    margin-top: 20px;
+    font-size: 17px;
+}
+QPushButton#calibration_selected_button:pressed {
+    background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
+                                      stop: 0 #3a3a3a, stop: 1 #1ab900);
+}
+
+QPushButton#regi_button {
+    color: #7f7f7f;
+    background-color: #2d2d2d;
+    border-style: outset;
+    border-width: 0px;
+    border-color: rgb(50,50,60);
+    min-height: 20px;
+    padding: 4 10 4 10;
+    margin-top: 8px;
+}
+QPushButton#regi_button:pressed {
+    background-color: #505050;
+}
+QLabel#regi_label {
+    color: #7f7f7f;
+    background-color: #232323;
+    padding: 4 10 4 10;
+    border: 1px;
+    border-radius: 10px;
+    margin-top: 0px;
+}
+/* ------------------------ auto calibration_button -------------------------- */
+QPushButton#auto_calibration_button {
+    color: #d3d3d3;
+    background-color: #3a3a3a;
+    border-style: solid;
+    border-width:2px;
+    border-radius:30px;
+    border-color: #ffff00;
+    max-width:200px;
+    max-height:60px;
+    min-width:200px;
+    min-height:60px;
+    margin-top: 20px;
+    font-size: 17px;
+}
+QPushButton#auto_calibration_button:pressed {
+    background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
+                                      stop: 0 #3a3a3a, stop: 1 #1ab900);
+}
+QPushButton#auto_calibration_selected_button {
+    color: #d3d3d3;
+    background-color: #024d09;
+    border-style: solid;
+    border-width:2px;
+    border-radius:30px;
+    border-color: #ffff00;
+    max-width:200px;
+    max-height:60px;
+    min-width:200px;
+    min-height:60px;
+    margin-top: 20px;
+    font-size: 17px;
+}
+QPushButton#auto_calibration_selected_button:pressed {
+    background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
+                                      stop: 0 #3a3a3a, stop: 1 #1ab900);
+}
+
+/* <<  --Spine selection button in Operation Mode--  */
+QPushButton#operation_spine_selection {
+    color: #d3d3d3;
+    background-color: #202020;
+    border-style: solid;
+    border-width:2px;
+    border-radius:25px;
+    border-color: #aaaa00;
+    max-width:50px;
+    max-height:50px;
+    min-width:50px;
+    min-height:50px;
+    margin-top: 0px;
+}
+
+QPushButton#operation_spine_selected_button {
+    color: #d3d3d3;
+    background-color: #555500;
+    border-style: solid;
+    border-width:2px;
+    border-radius:25px;
+    border-color: #aaaa00;
+    max-width:50px;
+    max-height:50px;
+    min-width:50px;
+    min-height:50px;
+    margin-top: 0px;
+}
+/* >>  --Spine selection button in Operation Mode--  */
