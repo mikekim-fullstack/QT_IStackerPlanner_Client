@@ -13,8 +13,8 @@ class QmkMotionParamLayout;
 class QmkMotionEditVLayout : public QVBoxLayout
 {
 private:
-    const char *bNameCommand[8]={"DropCup","RotateEE", "LinearFly To", "Folding Arm",
-                                 "Place Target", "Grab Target","Circular Motion", "Spiral Motion"};
+    const char *bNameCommand[9]={"DropCup","RotateEE", "LinearFly To", "Folding Arm",
+                                 "Place Target", "Grab Target","Circular Motion", "Spiral Motion","Test Order"};
 public:
     QmkMotionEditVLayout(QWidget *parent=nullptr);
     ~QmkMotionEditVLayout() override ;
@@ -29,7 +29,7 @@ public:
     std::vector<PlaceTargetParam*> vecPlaceTargetParams;
    // QTableWidget *tableWidgetParmas=nullptr;
     QTableWidget *tableWidgetMotionLists=nullptr;
-    QmkPushButton *buttonsCmd[8]={nullptr};
+    QmkPushButton *buttonsCmd[9]={nullptr};
     QmkPushButton *buttonSave=nullptr;
     QmkPushButton *buttonMoveInMotion=nullptr;
     QLabel *labelCmdName=nullptr;
@@ -52,6 +52,7 @@ public slots:
     void clickedButton_createGrabTarget();
     void clickedButton_createCircularMotion();
     void clickedButton_createSpiralMotion();
+    void clickedButton_testMotion();
 
 
 };

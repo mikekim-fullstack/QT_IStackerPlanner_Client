@@ -5,6 +5,7 @@
 #include <QSlider>
 #include <QLabel>
 #include <QLineEdit>
+#include <QPushButton>
 class JntCtrlDialog;
 class QmkJointEditVLayout;
 class QmkJointSliderLayout : public QHBoxLayout
@@ -20,16 +21,23 @@ public:
     QLabel *name;
     QSlider *slider;
     QLineEdit *edit;
+    QPushButton *buttonDecrease, *buttonIncrease;
     int preValue;
     bool isUpdatedJoint;
     double ang;
     double residueAngle;
     void setQss(QByteArray &qss);
     void setUpdateRobot(bool set);
+    void cmdMoveJoint(int dir, int jntID);
 public slots:
     void sliderMoved(int value);
     void sliderReleased();
     void setValue(double val);
+
+    void btnDecreasePressed();
+    void btnDecreaseReleased();
+    void btnIncreasePressed();
+    void btnIncreaseReleased();
     //void setValue(int axis, double value);
 
 };

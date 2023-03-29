@@ -8,6 +8,8 @@
 #include "mksocketclient.h"
 #include "../sharedfiles/mkglobalclass.h"
 #include "mkGlobalData.h"
+#include "../sharedfiles/mkRobotKin.h"
+
 //class mkSocketServer;
 class JntCtrlDialog;
 class QmkJointEditVLayout;
@@ -59,6 +61,7 @@ public:
 public:
     double jointSpeedPercent=100;
     double jointAccPercent=100;
+    MKZoeRobotKin tmpRobotKin;
 public:
 
    QHBoxLayout *mainHLayout ;
@@ -91,6 +94,7 @@ public:
     ///// Handling queueing jobs...
     volatile int statusJobScheduler=-1;
     volatile int numberCurrentJob=1;
+    int testCurrentJob=-1;
     std::queue<PacketJobs*> queuePacketJobs;
     // -------------------------------------
     // QWidget interface
@@ -112,7 +116,8 @@ public:
     void action_moveMultiJointRobot();
     void action_moveMultiJointRobot(double X, double R1, double R2, double Z);
     void action_moveAllTargetRobot();
-    void action_moveSingleJointRobot(int axisID);
+    void action_moveSingleJointRobot(int axisID, double vel=100.0);
+    void action_moveSingleJointRobot(int axisID, double pos[], double vel=100.0);
     void action_moveCircle(CircleProfile & circleProfile);
     void action_moveSpiral(SpiralProfile & spiralProfile);
     void action_orderSequence(int orderID);
@@ -124,8 +129,10 @@ public:
     void action_getAllPosition();
     void action_setPosition();
     void action_stop();
+    void action_pause(int bPause);
     void action_savePos();
    // void action_getPos();
+    void action_testMotion();
  signals:
     void widgetVisibilityChanged(bool state);
 public slots:

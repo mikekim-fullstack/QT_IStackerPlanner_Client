@@ -5,6 +5,7 @@
 #include "mainwindow.h"
 #include "mkGlobalData.h"
 #include "../sharedfiles/mkRobotKin.h"
+#include "../sharedfiles/mkZoeRobotics_define.h"
 #include "qmksetupvlayout.h"
 
 #include <QTimer>
@@ -90,8 +91,11 @@ void QmkMotionEditVLayout::createMotionLists()
         buttonsCmd[i+4] = new QmkPushButton(bNameCommand[i+4]);
         buttonHLayoutCmdButton2->addWidget(buttonsCmd[i+4]);
     }
+    buttonsCmd[8] = new QmkPushButton(bNameCommand[8]);
+    buttonHLayoutCmdButton2->addWidget(buttonsCmd[8]);
 
-    buttonMoveInMotion = new QmkPushButton("Move In Motion");
+//    buttonMoveInMotion = new QmkPushButton("Move In Motion");
+    buttonMoveInMotion = new QmkPushButton("Order Coffee #2");
     buttonSave         = new QmkPushButton("Save To File");
     buttonHLayoutButton3->addWidget(buttonSave);
     buttonHLayoutButton3->addWidget(buttonMoveInMotion);
@@ -158,6 +162,7 @@ void QmkMotionEditVLayout::createMotionLists()
     connect(buttonsCmd[5], &QmkPushButton::mkClicked, this, &QmkMotionEditVLayout::clickedButton_createGrabTarget);
     connect(buttonsCmd[6], &QmkPushButton::mkClicked, this, &QmkMotionEditVLayout::clickedButton_createCircularMotion);
     connect(buttonsCmd[7], &QmkPushButton::mkClicked, this, &QmkMotionEditVLayout::clickedButton_createSpiralMotion);
+    connect(buttonsCmd[8], &QmkPushButton::mkClicked, this, &QmkMotionEditVLayout::clickedButton_testMotion);
 
     connect(buttonMoveInMotion, &QmkPushButton::mkClicked,this, &QmkMotionEditVLayout::clickedButton_MoveInMotion);
 
@@ -407,10 +412,11 @@ void QmkMotionEditVLayout::clickedButton_createCircularMotion()
     circleProfile.radius=50/1.5;
     circleProfile.cenPosX=robotKin.curEEx;//-circleProfile.radius;//1000;
     circleProfile.cenPosY=robotKin.curEEy;///-250;
-    if(robotKin.curEEth>=0)
-        circleProfile.EETheta=90;
-    else
-        circleProfile.EETheta=-90;
+//    if(robotKin.curEEth>=0)
+//        circleProfile.EETheta=90;
+//    else
+//        circleProfile.EETheta=-90;
+    circleProfile.EETheta = robotKin.curEEth*RAD2DEG;
     circleProfile.arcAng=360*1;
     g_MainWindow->action_moveCircle(circleProfile);
 }
@@ -422,11 +428,17 @@ void QmkMotionEditVLayout::clickedButton_createSpiralMotion()
     sprialProfile.radius=50/2;
     sprialProfile.cenPosX=robotKin.curEEx;//-sprialProfile.radius;//1000;
     sprialProfile.cenPosY=robotKin.curEEy;///-250;
-    if(robotKin.curEEth>=0)
-        sprialProfile.EETheta=90;
-    else
-        sprialProfile.EETheta=-90;
+//    if(robotKin.curEEth>=0)
+//        sprialProfile.EETheta=90;
+//    else
+//        sprialProfile.EETheta=-90;
+    sprialProfile.EETheta = robotKin.curEEth*RAD2DEG;
     sprialProfile.arcAng=360*3;
     sprialProfile.heightZ = -50;
     g_MainWindow->action_moveSpiral(sprialProfile);
+}
+
+void QmkMotionEditVLayout::clickedButton_testMotion()
+{
+    g_MainWindow->action_testMotion();
 }

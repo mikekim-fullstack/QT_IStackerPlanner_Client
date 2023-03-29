@@ -74,7 +74,7 @@ QGroupBox *QmkJointEditVLayout::createJointGroup()
     speedSpinBox = new QSpinBox;
     speedSpinBox->setRange(10, 100);
     speedSpinBox->setSingleStep(10);
-    speedSpinBox->setValue(100);
+    speedSpinBox->setValue(70);
 
     QHBoxLayout *buttonsLayout = new QHBoxLayout;
     resetZeroButton = new QmkPushButton(tr("Reset to Zero "));

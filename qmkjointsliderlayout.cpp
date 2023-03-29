@@ -2,6 +2,7 @@
 #include "qmkjointsliderlayout.h"
 #include "../sharedfiles/mkmatrix.h"
 #include "../sharedfiles/mkRobotKin.h"
+#include "../sharedfiles/mkZoeRobotics_define.h"
 #include "jntctrldialog.h"
 #include "qmkjointeditvlayout.h"
 #include <QValidator>
@@ -19,6 +20,8 @@ QmkJointSliderLayout::QmkJointSliderLayout(QmkJointEditVLayout *parent, QString 
     name = new QLabel(jntname);
     slider = new QSlider(Qt::Orientation::Horizontal);
     edit = new QLineEdit;
+    buttonDecrease = new QPushButton("-<<");
+    buttonIncrease = new QPushButton(">>+");
 
     //setContentsMargins(10, 0, 10, 0);
 
@@ -28,22 +31,47 @@ QmkJointSliderLayout::QmkJointSliderLayout(QmkJointEditVLayout *parent, QString 
     edit->setValidator(new QDoubleValidator(-3000,3000,2,this));
     edit->setAlignment(Qt::AlignRight);
     edit->setText(QString::number(0,'f',2));
-    edit->setMaximumWidth(100);
+    edit->setMaximumWidth(50);
+
+    buttonDecrease->setMaximumWidth(50);
+    buttonIncrease->setMaximumWidth(50);
+
     addWidget(name);
     addWidget(slider);
+    addWidget(buttonDecrease);
     addWidget(edit);
-    if(jointID==1){
-        name->setObjectName(QStringLiteral("joint1_label"));
-        edit->setObjectName(QStringLiteral("joint1_ang_edit"));
-        slider->setObjectName(QStringLiteral("joint1_slider"));
-    }
-    else {
-        name->setObjectName(QStringLiteral("joint_label"));
-        edit->setObjectName(QStringLiteral("joint_ang_edit"));
-        slider->setObjectName(QStringLiteral("joint_slider"));
-    }
+    addWidget(buttonIncrease);
+    setMargin(0);
+    addSpacing(0);
+
+//    if(jointID==1){
+//        name->setObjectName(QStringLiteral("joint_label"));
+//        edit->setObjectName(QStringLiteral("joint_ang_edit"));
+//        slider->setObjectName(QStringLiteral("joint_slider"));
+//    }
+//    else {
+//        name->setObjectName(QStringLiteral("joint_label"));
+//        edit->setObjectName(QStringLiteral("joint_ang_edit"));
+//        slider->setObjectName(QStringLiteral("joint_slider"));
+//    }
+
+    name->setObjectName(QStringLiteral("joint_label"));
+    edit->setObjectName(QStringLiteral("joint_ang_edit"));
+    slider->setObjectName(QStringLiteral("joint_slider"));
+    buttonDecrease->setObjectName(QStringLiteral("joint_btn_press"));
+    buttonIncrease->setObjectName(QStringLiteral("joint_btn_press"));
+
+    edit->setAlignment(Qt::AlignCenter);
+
     connect(slider, &QSlider::sliderMoved, this,  &QmkJointSliderLayout::sliderMoved);
     connect(slider, &QSlider::sliderReleased, this,  &QmkJointSliderLayout::sliderReleased);
+
+    connect(buttonDecrease, &QPushButton::pressed, this,  &QmkJointSliderLayout::btnDecreasePressed);
+    connect(buttonDecrease, &QPushButton::released, this,  &QmkJointSliderLayout::btnDecreaseReleased);
+
+    connect(buttonIncrease, &QPushButton::pressed, this,  &QmkJointSliderLayout::btnIncreasePressed);
+    connect(buttonIncrease, &QPushButton::released, this,  &QmkJointSliderLayout::btnIncreaseReleased);
+
 }
 
 QmkJointSliderLayout::QmkJointSliderLayout(JntCtrlDialog *parent,QString jntname, int jointID)
@@ -82,6 +110,7 @@ QmkJointSliderLayout::QmkJointSliderLayout(JntCtrlDialog *parent,QString jntname
     }
     connect(slider, &QSlider::sliderMoved, this,  &QmkJointSliderLayout::sliderMoved);
     connect(slider, &QSlider::sliderReleased, this,  &QmkJointSliderLayout::sliderReleased);
+
 }
 
 
@@ -101,6 +130,8 @@ void QmkJointSliderLayout::setUpdateRobot(bool set)
 {
     update_robot = set;
 }
+
+
 
 void QmkJointSliderLayout::sliderMoved(int value)
 {
@@ -201,3 +232,60 @@ void QmkJointSliderLayout::setValue(double val)
 //    }
 
 }
+
+void QmkJointSliderLayout::cmdMoveJoint(int dir, int jntID)
+{
+    double pos[4];
+
+    robotKin.getJointPos(pos);
+    robotKin.printForKin();
+    if(dir<0){
+        pos[jntID]=robotKin.minJntLimit[jntID];
+        if(jntID>=2){
+            pos[jntID] *=DEG2RAD;
+            pos[jntID] +=0.0175;// 1deg off
+        }
+        else {
+            pos[jntID]+=1.0;// 1mm off
+        }
+
+
+    }
+    else if(dir>0){
+        pos[jntID]=robotKin.maxJntLimit[jntID];
+        if(jntID>=2){
+            pos[jntID] *=DEG2RAD;
+            pos[jntID] -=0.0175;// 1deg off
+        }
+        else {
+            pos[jntID]-=1.0;// 1mm off
+        }
+    }
+
+    g_MainWindow->action_moveSingleJointRobot(jntID,pos,15.0);
+}
+
+void QmkJointSliderLayout::btnDecreasePressed()
+{
+    qDebug()<<"btnDecreasePressed()"<<jntID<<"\n";
+   cmdMoveJoint(-1, jntID);
+
+}
+
+void QmkJointSliderLayout::btnDecreaseReleased()
+{
+    qDebug()<<"btnDecreaseReleased()"<<jntID<<"\n";
+    g_MainWindow->action_stop();
+}
+
+void QmkJointSliderLayout::btnIncreasePressed()
+{
+    qDebug()<<"btnIncreasePressed()"<<jntID<<"\n";
+    cmdMoveJoint(1, jntID);
+}
+void QmkJointSliderLayout::btnIncreaseReleased()
+{
+    qDebug()<<"btnIncreaseReleased()"<<jntID<<"\n";
+    g_MainWindow->action_stop();
+}
+

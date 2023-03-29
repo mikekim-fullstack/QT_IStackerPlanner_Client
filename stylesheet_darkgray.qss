@@ -95,18 +95,19 @@ QStactedWidget {
 QLabel#joint1_label {
     color: #7f7f7f;
     background-color: #232323;
-    padding: 4 0 4 0;
+    padding: 0 2 0 2;
     border: 1px;
     border-radius: 10px;
     margin-top: 0px;
 }
+
 QLabel#joint_label {
     color: #7f7f7f;
     background-color: #232323;
-    padding: 4 0 4 0;
+    padding: 2 2 2 2;
     border: 1px;
     border-radius: 10px;
-    margin-top: 0px;
+
 }
 /* ----------------------------------------- */
 
@@ -122,7 +123,7 @@ QSlider#joint1_slider::groove:horizontal {
     background-color: #505050;
 
     height: 8px;
-    border-radius: 4px;
+    border-radius: 2px;
 }
 
 QSlider#joint1_slider::handle:horizontal {
@@ -191,12 +192,23 @@ QLineEdit#joint1_ang_edit {
      margin-top: 10px;
 }
 QLineEdit#joint_ang_edit {
-    color: #787878;
+    color: #ffff00;
     background-color: #2d2d2d;
     border: 1px;
     border-radius: 0px;
-    padding: 4 0 4 0;
-     margin-top: 0px;
+    padding: 4 2 4 2;
+    margin-left: 0px;
+}
+
+QPushButton#joint_btn_press {
+    color: #ff0000;
+    background-color: #2d2d2d;
+    border-style: outset;
+    border-width: 0px;
+    border-color: rgb(50,50,60);
+    min-height: 20px;
+    padding: 14 10 14 10;
+    margin: 0px;
 }
 QPushButton#joint_button {
     color: #646464;

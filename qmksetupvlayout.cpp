@@ -34,7 +34,7 @@ QmkSetupVLayout::QmkSetupVLayout(QWidget *parent) : QVBoxLayout(parent)
         groupBoxVLayout->addLayout(buttonHLayout[i]);
     }
     buttonHLayout[0]->addWidget(label[0]);
-    for(int i=0; i<5; i++) {
+    for(int i=0; i<6; i++) {
         buttonsRobotOperation[i] = new QmkPushButton(buttonNameRobotOperation[i]);
         buttonHLayout[0]->addWidget(buttonsRobotOperation[i]);
     }
@@ -56,9 +56,9 @@ QmkSetupVLayout::QmkSetupVLayout(QWidget *parent) : QVBoxLayout(parent)
     connect(buttonsRobotOperation[0], &QmkPushButton::mkClicked, this, &QmkSetupVLayout::clickedButton_connectToServer);
     connect(buttonsRobotOperation[1], &QmkPushButton::mkClicked, this, &QmkSetupVLayout::clickedButton_reboot);
     connect(buttonsRobotOperation[2], &QmkPushButton::mkClicked, this, &QmkSetupVLayout::clickedButton_turnPowerOnOff);
-    connect(buttonsRobotOperation[3], &QmkPushButton::mkClicked, this, &QmkSetupVLayout::clickedButton_stop);
-//    connect(buttonsRobotOperation[3], &QmkPushButton::mkClicked, this, &QmkSetupVLayout::clickedButton_savePos);
-    connect(buttonsRobotOperation[4], &QmkPushButton::mkClicked, this, &QmkSetupVLayout::clickedButton_getPos);
+    connect(buttonsRobotOperation[3], &QmkPushButton::mkClicked, this, &QmkSetupVLayout::clickedButton_pause);
+    connect(buttonsRobotOperation[4], &QmkPushButton::mkClicked, this, &QmkSetupVLayout::clickedButton_stop);
+    connect(buttonsRobotOperation[5], &QmkPushButton::mkClicked, this, &QmkSetupVLayout::clickedButton_getPos);
 
     connect(buttonsHoming[0], &QmkPushButton::mkClicked, this, &QmkSetupVLayout::clickedButton_homingR2);
     connect(buttonsHoming[1], &QmkPushButton::mkClicked, this, &QmkSetupVLayout::clickedButton_homingR1);
@@ -87,6 +87,21 @@ void QmkSetupVLayout::clickedButton_turnPowerOnOff()
         g_MainWindow->action_controlPower(false);
         buttonsRobotOperation[1]->setText("TurnOn Power");
     }
+}
+
+void QmkSetupVLayout::clickedButton_pause()
+{
+    bPause =!bPause;
+    if(bPause){
+        buttonsRobotOperation[3]->setText(" Pause ");
+
+    }
+    else{
+        buttonsRobotOperation[3]->setText("Resume");
+    }
+    g_MainWindow->action_pause(bPause);
+
+//    g_MainWindow->action_stop();
 }
 
 void QmkSetupVLayout::clickedButton_stop()

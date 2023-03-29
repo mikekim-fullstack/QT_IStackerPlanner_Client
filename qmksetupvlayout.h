@@ -15,11 +15,12 @@ class QmkSetupVLayout : public QVBoxLayout
 {
     Q_OBJECT
 private:
-    char const *buttonNameRobotOperation[5]={"Connect","Reboot", "TurnOn Power", "Stop", "Get Pos"};
+    char const *buttonNameRobotOperation[6]={"Connect","Reboot", "TurnOn Power"," Pause ", "Stop", "Get Pos"};
     char const *buttonNameHoming[4]={"Arm Joint2", "Arm Joint1", "X-axis", "Z-axis"};
-    QmkPushButton *buttonsRobotOperation[5]={nullptr};
+    QmkPushButton *buttonsRobotOperation[6]={nullptr};
     QmkPushButton *buttonsHoming[4]={nullptr};
     bool bPowerOn=false;
+    bool bPause=true;
 public:
     QmkSetupVLayout(QWidget *parent=nullptr);
 
@@ -27,6 +28,7 @@ public slots:
     void clickedButton_connectToServer();
     void clickedButton_reboot();
     void clickedButton_turnPowerOnOff();
+    void clickedButton_pause();
     void clickedButton_stop();
     void clickedButton_savePos();
     void clickedButton_getPos();

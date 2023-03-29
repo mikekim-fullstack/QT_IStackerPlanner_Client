@@ -1,4 +1,5 @@
 #include "mainwindow.h"
+#include <QDateTime>
 //#include "UIMainWindow.h"
 //#include "ui_mainwindow.h"
 #include "renderrobotarm.h"
@@ -508,12 +509,12 @@ void MainWindow::action_rebootRobot()
         cout<<"Socket is not open!\n"<<flush;
         return;
     }
-    PacketJobs newJob[1];
+    PacketJobs newJob[2];
     numberCurrentJob++;
-   // newJob[0].packf("J%d N%d G%d M%d\n",numberCurrentJob, 1, SC_REBOOT, 1);
-   // newJob[1].packf("J%d N%d G%d M%d\n",numberCurrentJob, 2, SC_SETPOS, 1);
-    newJob[0].packf("J%d N%d G%d M%d\n",numberCurrentJob,   0, SC_STATUS_ALL_POS, 1);
-    for(int i=0; i<1; i++) {
+    newJob[0].packf("J%d N%d G%d M%d\n",numberCurrentJob, 1, SC_REBOOT, 1);
+//    newJob[1].packf("J%d N%d G%d M%d\n",numberCurrentJob, 2, SC_SETPOS, 1);
+    newJob[1].packf("J%d N%d G%d M%d\n",numberCurrentJob,   0, SC_STATUS_ALL_POS, 1);
+    for(int i=0; i<2; i++) {
         socketHandler->write(newJob[i].get());
     }
 }
@@ -616,14 +617,41 @@ void MainWindow::action_getEncoderValue(int axisID)
     newJob.packf("J%d N%d G%d M%d\n",numberCurrentJob, 0, SC_GET_ENCODER, axisID);
     socketHandler->write(newJob.get());
 }
-void MainWindow::action_moveSingleJointRobot(int axisID)
+void MainWindow::action_moveSingleJointRobot(int axisID, double vel)
 {
+    if(!socketHandler->bSocketOpen){
+        return;
+    }
     const int jN=4;
     PacketJobs newJob[jN];
+    int axisMap[4]={0,2,3,1};
     numberCurrentJob++;
     newJob[0].packf("J%d N%d G%d M%d W%5.3f X%5.3f Y%5.3f Z%5.3f V%5.3f A%5.3f\n",
-                    numberCurrentJob, 1, SC_SET_SPEED, axisID,
-                    robotKin.param.Px, robotKin.param.th1*RTOD, robotKin.param.th2*RTOD, robotKin.param.Pz, 100.0, 100.0);
+                    numberCurrentJob, 1, SC_SET_SPEED, axisMap[axisID],
+                    robotKin.param.Px, robotKin.param.th1*RTOD, robotKin.param.th2*RTOD, robotKin.param.Pz, vel, vel);
+    newJob[1].packf("J%d N%d G%d M%d\n",
+                    numberCurrentJob, 2, SC_MOVE, axisID);
+    newJob[2].packf("J%d N%d G%d M%d\n",
+                    numberCurrentJob, 3, SC_STATUS_ALL_POS, axisID);
+    newJob[3].packf("J%d N%d G%d M%d\n",
+                    numberCurrentJob,   0, SC_STATUS, axisID);
+    for(int i=0; i<jN; i++) {
+        socketHandler->write(newJob[i].get());
+    }
+    newJob[0].print();
+}
+void MainWindow::action_moveSingleJointRobot(int axisID, double pos[], double vel)
+{
+    if(!socketHandler->bSocketOpen){
+        return;
+    }
+    const int jN=4;
+    PacketJobs newJob[jN];
+    int axisMap[4]={0,3,1,2};
+    numberCurrentJob++;
+    newJob[0].packf("J%d N%d G%d M%d W%5.3f X%5.3f Y%5.3f Z%5.3f V%5.3f A%5.3f\n",
+                    numberCurrentJob, 1, SC_SET_SPEED, axisMap[axisID],
+                    pos[0], pos[2]*RTOD, pos[3]*RTOD, pos[1], vel, vel);
     newJob[1].packf("J%d N%d G%d M%d\n",
                     numberCurrentJob, 2, SC_MOVE, axisID);
     newJob[2].packf("J%d N%d G%d M%d\n",
@@ -803,9 +831,12 @@ void MainWindow::action_moveLinear()
                                            robotKin.curEEth, // Using current EE angle not target's angle...
                                            //selectedTargetObj->param.posTargetEE[3], //EETh
                                            selectedTargetObj->param.posTargetEE[2]);//EEZ
+    testRobotKin.printForKin();
+    cout<<"target: "<<selectedTargetObj->param.posTargetEE[0]<<", EEy:"<<selectedTargetObj->param.posTargetEE[1]<<", EEz:"<<selectedTargetObj->param.posTargetEE[2]<<", EEt"<<robotKin.curEEth<<endl;
+    cout<<"currentEEx: "<<robotKin.curEEx<<", EEy:"<<robotKin.curEEy<<", EEz:"<<robotKin.curZ<<", EEt"<<robotKin.curEEth<<endl;
     if(rec) {
 
-        const int jN=4;
+        const int jN=2;
         PacketJobs newJob[jN];
         numberCurrentJob++;
         // J: Job ID
@@ -859,10 +890,10 @@ void MainWindow::action_moveLinear()
 
 
             newJob[1].packf("J%d N%d G%d M%d\n",
-                            numberCurrentJob, 2, SC_MOVE, CARTESIAN_MODE);
+                            numberCurrentJob, 0, SC_MOVE, CARTESIAN_MODE);
 
-            newJob[2].packf("J%d N%d G%d M%d\n",
-                            numberCurrentJob, 0, SC_STATUS_ALL_POS, MULTI_ALL_JNT_MODE);
+//            newJob[2].packf("J%d N%d G%d M%d\n",
+//                            numberCurrentJob, 0, SC_STATUS_ALL_POS, MULTI_ALL_JNT_MODE);
 
 
             for(int i=0; i<jN; i++) {
@@ -880,16 +911,16 @@ void MainWindow::action_moveMultiJointRobot()
         cout<<"Socket is not open!\n"<<flush;
         return;
     }
-    const int jN=3;
+    const int jN=2;
     PacketJobs newJob[jN];
     numberCurrentJob++;
     newJob[0].packf("J%d N%d G%d M%d W%5.3f X%5.3f Y%5.3f Z%5.3f V%5.3f A%5.3f\n",
                     numberCurrentJob, 1, SC_SET_SPEED, MULTI_ALL_JNT_MODE,
                     robotKin.param.Px, robotKin.param.th1*RTOD, robotKin.param.th2*RTOD, robotKin.param.Pz,  jointSpeedPercent, jointAccPercent);
     newJob[1].packf("J%d N%d G%d M%d\n",
-                    numberCurrentJob, 2, SC_MOVE, MULTI_ALL_JNT_MODE);
-    newJob[2].packf("J%d N%d G%d M%d\n",
-                    numberCurrentJob,   0, SC_STATUS_ALL_POS, MULTI_ALL_JNT_MODE);
+                    numberCurrentJob, 0, SC_MOVE, MULTI_ALL_JNT_MODE);
+//    newJob[2].packf("J%d N%d G%d M%d\n",
+//                    numberCurrentJob,   0, SC_STATUS_ALL_POS, MULTI_ALL_JNT_MODE);
     for(int i=0; i<jN; i++) {
         socketHandler->write(newJob[i].get());
     }
@@ -901,16 +932,16 @@ void MainWindow::action_moveMultiJointRobot(double X, double R1, double R2, doub
         cout<<"Socket is not open!\n"<<flush;
         return;
     }
-    const int jN=3;
+    const int jN=2;
     PacketJobs newJob[jN];
     numberCurrentJob++;
     newJob[0].packf("J%d N%d G%d M%d W%5.3f X%5.3f Y%5.3f Z%5.3f V%5.3f A%5.3f\n",
                     numberCurrentJob, 1, SC_SET_SPEED, MULTI_ALL_JNT_MODE,
                     X, R1*RTOD, R2*RTOD, Z, jointSpeedPercent, jointAccPercent);
     newJob[1].packf("J%d N%d G%d M%d\n",
-                    numberCurrentJob, 2, SC_MOVE, MULTI_ALL_JNT_MODE);
-    newJob[2].packf("J%d N%d G%d M%d\n",
-                    numberCurrentJob,   0, SC_STATUS_ALL_POS, MULTI_ALL_JNT_MODE);
+                    numberCurrentJob, 0, SC_MOVE, MULTI_ALL_JNT_MODE);
+//    newJob[2].packf("J%d N%d G%d M%d\n",
+//                    numberCurrentJob,   0, SC_STATUS_ALL_POS, MULTI_ALL_JNT_MODE);
     for(int i=0; i<jN; i++) {
         socketHandler->write(newJob[i].get());
     }
@@ -987,20 +1018,34 @@ void MainWindow::action_stop()
         return;
     }
 
-    PacketJobs newJob;
-    numberCurrentJob++;
-    newJob.packf("J%d N%d G%d\n", numberCurrentJob,   0, SC_STOP);
-    socketHandler->write(newJob.get());
+    const int jN=1;
+    PacketJobs newJob[jN];
 
+    newJob[0].packf("J%d N%d G%d\n", ++numberCurrentJob,   0, SC_STOP);
 
-//    const int jN=2;
-//    PacketJobs newJob[jN];
-//    newJob[0].packf("J%d N%d G%d\n", SC_STOP,   0, SC_STOP);
-//    newJob[1].packf("J%d N%d G%d M%d\n",
-//                    SC_SET_SPEED,   0, SC_STATUS_ALL_POS, 1);
-//    for(int i=0; i<jN; i++) {
-//        socketHandler->write(newJob[i].get());
-//    }
+    for(int i=0; i<jN; i++) {
+        socketHandler->write(newJob[i].get());
+    }
+
+}
+
+void MainWindow::action_pause(int bPause)
+{
+    if(!socketHandler->bSocketOpen) {
+        cout<<"Socket is not open!\n"<<flush;
+        return;
+    }
+
+    int mode = bPause?1:2;// 1: pause, 2: resume
+
+    const int jN=1;
+    PacketJobs newJob[jN];
+
+    newJob[0].packf("J%d N%d G%d M%d\n", ++numberCurrentJob,   0, SC_PAUSE, mode);
+
+    for(int i=0; i<jN; i++) {
+        socketHandler->write(newJob[i].get());
+    }
 }
 
 void MainWindow::action_savePos()
@@ -1015,6 +1060,104 @@ void MainWindow::action_savePos()
     newJob.packf("J%d N%d G%d\n", numberCurrentJob,   0, SC_SAVE_POS);
     socketHandler->write(newJob.get());
 }
+
+void MainWindow::action_testMotion()
+{
+    int sel=1;
+    if(sel==1)
+    {
+        if(!socketHandler->bSocketOpen) {
+            cout<<"Socket is not open!\n"<<flush;
+            return;
+        }
+        int numSequence=0;
+        numberCurrentJob++;
+        testCurrentJob=numberCurrentJob;
+        int count=0;
+        int n=20;
+        MapObjActor *objActorFirst = renderRobotFront->objTarget[0];
+        for( MapObjActor * objActor:renderRobotFront->objTarget) {
+            //objActor->param.posTargetEE;//EEx,EEy,EEz,EEth;
+            //        objActor->param.getTargetType().c_str();
+            //        objActor->param.getMoveType().c_str();
+
+            MKZoeRobotKin testRobotKin(robotKin);
+            bool rec = testRobotKin.invKinEE_W_XYRZ(objActor->param.posTargetEE[0],//EEx
+                    objActor->param.posTargetEE[1], //EEy
+                    objActor->param.posTargetEE[3], //EETh
+                    objActor->param.posTargetEE[2]);//EEZ
+            if(!rec) continue;
+
+            qDebug()<<"targetName: "<<objActor->param.name<<", count="<<++count;
+            if(count==n) {
+                objActor=objActorFirst;
+            }
+
+            const int jN=2;
+            PacketJobs newJob[jN];
+            newJob[0].packf("J%d N%d G%d M%d W%5.3f X%5.3f Y%5.3f Z%5.3f V%5.3f A%5.3f\n",
+                            numberCurrentJob, ++numSequence, SC_SET_SPEED, MULTI_ALL_JNT_MODE,
+                            testRobotKin.param.Px, testRobotKin.param.th1*RTOD,
+                            testRobotKin.param.th2*RTOD, testRobotKin.param.Pz,  jointSpeedPercent, jointAccPercent);
+
+
+            if(count==n) // sequence==0: indicating this is the last sequence.
+                newJob[1].packf("J%d N%d G%d M%d\n",
+                                numberCurrentJob, 0, SC_MOVE, MULTI_ALL_JNT_MODE);
+
+            else
+                newJob[1].packf("J%d N%d G%d M%d\n",
+                                numberCurrentJob, ++numSequence, SC_MOVE, MULTI_ALL_JNT_MODE);
+
+            numSequence++;
+
+            for(int i=0; i<jN; i++) {
+                // Wait for 10 sec before running the next motion...
+                //            QTime dieTime= QTime::currentTime().addMSecs(50);
+                //            while (QTime::currentTime() < dieTime) QCoreApplication::processEvents(QEventLoop::AllEvents, 20);
+
+                socketHandler->write(newJob[i].get());
+                // delay 20ms
+                QTime dieTime= QTime::currentTime().addMSecs(20);
+                while (QTime::currentTime() < dieTime)
+                    QCoreApplication::processEvents(QEventLoop::AllEvents, 20);
+            }
+            if(count==n) break;
+        }
+        qDebug()<<"targetName: "<<"total sequence: "<<numSequence;
+    }
+    else if(sel==2)
+    {
+        // 0. ... Joint Motion ...
+        // T_CupPlace_1_Entrance
+
+        // 1. ... Linear Motion ...
+        // T_Place1_1
+        // T_CupPlace_1_Entrance
+
+        // 2. Joint Motion
+        // T_CupPlace_2_Entrance
+
+        // 3. Linear Motion ...
+        // T_CupPlace_2
+        // T_CupPlace_2_Entrance
+
+        // 4. Joint Motion
+        // T_Cup_Drop_Entry
+
+        // 5. Linear Motion
+        // T_Cup_Drop_Place
+        // T_Cup_Drop_Entry
+
+        // 6. Joint Motion
+        // T_TAG67_CENTER_Y_600
+
+        // 7. Linear Motion
+        // T_CoffeePlace
+        // T_TAG67_CENTER_Y_600
+
+    }
+}
 // End of Action functions
 ///////////////////////////////////////////////////////////////////////////////////
 void MainWindow::processSocketResponseTimer()
@@ -1022,14 +1165,17 @@ void MainWindow::processSocketResponseTimer()
     if(socketHandler->ringBuffer.isEmpty()) return;
     int codeValue =-1;
     if(socketHandler->ringBuffer.codeSeen('R')){
+
         codeValue = socketHandler->ringBuffer.codeValue();
+        if(codeValue!=RC_UPDATE_MOTION) qDebug()<<"ResponseTimer: "<<QDateTime::currentDateTime()<<":"<<socketHandler->ringBuffer.curBuffer;
         switch (codeValue) {
         case RC_UPDATE_MOTION:
+        case RC_ACK_STOP:
         case RC_STATUS_ALL_POS:
             {
                 PacketResSocketAxisPos packetAxisPos;
                 packetAxisPos.unpack(socketHandler->ringBuffer.getCmd());
-                qDebug()<<"client-received: "<<socketHandler->ringBuffer.getCmd()<<", "<<packetAxisPos.pos[0]<<", "<<packetAxisPos.pos[1]<<", "<<packetAxisPos.pos[2]<<", "<<packetAxisPos.pos[3]<<Qt::endl;
+//                qDebug()<<"client-received: "<<socketHandler->ringBuffer.getCmd()<<", "<<packetAxisPos.pos[0]<<", "<<packetAxisPos.pos[1]<<", "<<packetAxisPos.pos[2]<<", "<<packetAxisPos.pos[3]<<Qt::endl;
 //                packetAxisPos.print();
                 robotKin.forKin(packetAxisPos.pos[0], packetAxisPos.pos[3],
                         packetAxisPos.pos[1]*DTOR, packetAxisPos.pos[2]*DTOR);
@@ -1045,6 +1191,30 @@ void MainWindow::processSocketResponseTimer()
 
             cout<<"I got the job done response..."<<endl<<flush;
             break;
+        case RC_ORDER_DONE:
+            {
+                cout<<"Received data from Server:["<<QDateTime::currentSecsSinceEpoch()<<"]:" <<socketHandler->ringBuffer.getCmd()<<endl<<flush;
+
+                int J=-1,N=-1;
+                if(socketHandler->ringBuffer.codeSeen('J')){
+                    J = socketHandler->ringBuffer.codeValue();
+                }
+                if(socketHandler->ringBuffer.codeSeen('N')){
+                    N = socketHandler->ringBuffer.codeValue();
+                }
+                qDebug()<<"J="<<J<<", N="<<N<<"\n";
+                if(J==testCurrentJob && N==0){
+
+                    // Wait for 1 sec before running the next motion...
+                    QTime dieTime= QTime::currentTime().addMSecs(1000);
+                    while (QTime::currentTime() < dieTime) QCoreApplication::processEvents(QEventLoop::AllEvents, 20);
+
+                    action_testMotion();
+                    qDebug()<<"ORDER Done!!\n";
+
+                 }
+              }
+
         }
     }
     else if(strcmp(socketHandler->ringBuffer.getCmd(),"Welcome to IStacker Server!")==0) {
@@ -1053,10 +1223,8 @@ void MainWindow::processSocketResponseTimer()
         action_setPosition();
         action_getAllPosition();
     }
-    if(codeValue!=RC_UPDATE_MOTION)
-    {
-        cout<<"Received data from Server: "<<socketHandler->ringBuffer.getCmd()<<endl<<flush;
-    }
+//    if(codeValue==RC_ORDER_DONE)
+
 
     /////////////////////////////////////////////////
         socketHandler->ringBuffer.readDone();
@@ -1136,18 +1304,22 @@ void runLinearMove_timer()
         gSharedData.trTime.transitT=gSharedData.trTime.finalT;
     }
 
-    cout<<"curEEPos["<<count++<<"]: ";
+    cout<<"curEEPos["<<count++<<"] "<<gSharedData.trTime.transitT<<": ";
     for(int i=0; i<NUMJNT; i++){
         gSharedData.curEEPos[i] =
                 robotKin.aCoEE[i][3]*pow(gSharedData.trTime.transitT,3) +
                 robotKin.aCoEE[i][2]*pow(gSharedData.trTime.transitT,2)  +
                 robotKin.aCoEE[i][1]*    gSharedData.trTime.transitT  +
                 robotKin.aCoEE[i][0];
-        cout<<gSharedData.curEEPos[i]<<", ";
+//        cout<<gSharedData.curEEPos[i]<<", ";
     }
-    cout<<gSharedData.trTime.transitT<<"\n-------------------------------\n";
+//    cout<<gSharedData.trTime.transitT<<"\n";
+    double px =robotKin.param.Px, pz=robotKin.param.Pz, th1=robotKin.param.th1, th2=robotKin.param.th2;
     bool rev=robotKin.invKinEE_W_XYRZ(gSharedData.curEEPos[0],gSharedData.curEEPos[1],gSharedData.curEEPos[3],gSharedData.curEEPos[2]);
-    //   bool rev=robotKin.invKinEE_L_XYRZ_Delta(gSharedData.curEEPos);
+    cout<<"X,Z,R1,R2: "<<robotKin.param.Px<<", "<<robotKin.param.Pz<<", "<<(robotKin.param.th1)*180.0/M_PI<<", "<<(robotKin.param.th2)*180.0/M_PI;
+    cout<<" :delta:"<<robotKin.param.Px-px<<", "<<robotKin.param.Pz-pz<<", "<<(robotKin.param.th1-th1)*180.0/M_PI<<", "<<(robotKin.param.th2-th2)*180.0/M_PI<<"\n";
+
+
     if(!rev) g_MainWindow->linearMoveTimer->stop();
 
 
