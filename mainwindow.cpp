@@ -622,7 +622,7 @@ void MainWindow::action_moveSingleJointRobot(int axisID, double vel)
     if(!socketHandler->bSocketOpen){
         return;
     }
-    const int jN=4;
+    const int jN=2;
     PacketJobs newJob[jN];
     int axisMap[4]={0,2,3,1};
     numberCurrentJob++;
@@ -630,11 +630,8 @@ void MainWindow::action_moveSingleJointRobot(int axisID, double vel)
                     numberCurrentJob, 1, SC_SET_SPEED, axisMap[axisID],
                     robotKin.param.Px, robotKin.param.th1*RTOD, robotKin.param.th2*RTOD, robotKin.param.Pz, vel, vel);
     newJob[1].packf("J%d N%d G%d M%d\n",
-                    numberCurrentJob, 2, SC_MOVE, axisID);
-    newJob[2].packf("J%d N%d G%d M%d\n",
-                    numberCurrentJob, 3, SC_STATUS_ALL_POS, axisID);
-    newJob[3].packf("J%d N%d G%d M%d\n",
-                    numberCurrentJob,   0, SC_STATUS, axisID);
+                    numberCurrentJob, 0, SC_MOVE, axisID);
+
     for(int i=0; i<jN; i++) {
         socketHandler->write(newJob[i].get());
     }
@@ -645,7 +642,7 @@ void MainWindow::action_moveSingleJointRobot(int axisID, double pos[], double ve
     if(!socketHandler->bSocketOpen){
         return;
     }
-    const int jN=4;
+    const int jN=2;
     PacketJobs newJob[jN];
     int axisMap[4]={0,3,1,2};
     numberCurrentJob++;
@@ -653,11 +650,8 @@ void MainWindow::action_moveSingleJointRobot(int axisID, double pos[], double ve
                     numberCurrentJob, 1, SC_SET_SPEED, axisMap[axisID],
                     pos[0], pos[2]*RTOD, pos[3]*RTOD, pos[1], vel, vel);
     newJob[1].packf("J%d N%d G%d M%d\n",
-                    numberCurrentJob, 2, SC_MOVE, axisID);
-    newJob[2].packf("J%d N%d G%d M%d\n",
-                    numberCurrentJob, 3, SC_STATUS_ALL_POS, axisID);
-    newJob[3].packf("J%d N%d G%d M%d\n",
-                    numberCurrentJob,   0, SC_STATUS, axisID);
+                    numberCurrentJob, 0, SC_MOVE, axisID);
+
     for(int i=0; i<jN; i++) {
         socketHandler->write(newJob[i].get());
     }
@@ -681,7 +675,7 @@ void MainWindow::action_moveCircle(CircleProfile &circleProfile)
         return;
     }
 
-        const int jN=3;
+        const int jN=2;
         PacketJobs newJob[jN];
         numberCurrentJob++;
 
@@ -689,10 +683,8 @@ void MainWindow::action_moveCircle(CircleProfile &circleProfile)
                         numberCurrentJob, 1, SC_GEN_CIRCLE, CIRCLE_MODE,
                         circleProfile.speed, circleProfile.radius,  circleProfile.cenPosX, circleProfile.cenPosY,  circleProfile.EETheta, circleProfile.arcAng);
         newJob[1].packf("J%d N%d G%d M%d\n",
-                        numberCurrentJob, 2, SC_MOVE, CIRCLE_MODE);
+                        numberCurrentJob, 0, SC_MOVE, CIRCLE_MODE);
 
-        newJob[2].packf("J%d N%d G%d M%d\n",
-                        numberCurrentJob,   0, SC_STATUS_ALL_POS, MULTI_ALL_JNT_MODE);
 
 
         for(int i=0; i<jN; i++) {
@@ -720,7 +712,7 @@ void MainWindow::action_moveSpiral(SpiralProfile &spiralProfile)
     }
     if(rec)
     {
-        const int jN=3;
+        const int jN=2;
         PacketJobs newJob[jN];
         numberCurrentJob++;
         newJob[0].packf("J%d N%d G%d M%d W%5.3f X%5.3f Y%5.3f Z%5.3f V%5.3f A%5.3f B%5.3f C%5.3f\n",
@@ -728,12 +720,9 @@ void MainWindow::action_moveSpiral(SpiralProfile &spiralProfile)
                         spiralProfile.speed, spiralProfile.radius,  spiralProfile.cenPosX, spiralProfile.cenPosY,
                         spiralProfile.EETheta, spiralProfile.arcAng, originalPz, spiralProfile.heightZ);
         newJob[1].packf("J%d N%d G%d M%d\n",
-                        numberCurrentJob, 2, SC_MOVE, CIRCLE_MODE);
+                        numberCurrentJob, 0, SC_MOVE, CIRCLE_MODE);
 
-        newJob[2].packf("J%d N%d G%d M%d\n",
-                        numberCurrentJob,   0, SC_STATUS_ALL_POS, MULTI_ALL_JNT_MODE);
-//        newJob[2].packf("J%d N%d G%d M%d\n",
-//                        numberCurrentJob,   0, SC_STATUS_ALL_POS, MULTI_JNT_MODE);
+
 
         for(int i=0; i<jN; i++) {
             socketHandler->write(newJob[i].get());
@@ -794,7 +783,7 @@ void MainWindow::action_moveEERotate()
                                            robotKin.curZ);//EEZ
     if(rec) {
 
-        const int jN=3;
+        const int jN=2;
         PacketJobs newJob[jN];
         numberCurrentJob++;
         newJob[0].packf("J%d N%d G%d M%d W%5.3f X%5.3f Y%5.3f Z%5.3f V%5.3f\n",
@@ -805,11 +794,7 @@ void MainWindow::action_moveEERotate()
                         40*DTOR);//  speed[rad/sec]
         newJob[0].print();
         newJob[1].packf("J%d N%d G%d M%d\n",
-                        numberCurrentJob, 2, SC_MOVE, CARTESIAN_MODE);
-
-        newJob[2].packf("J%d N%d G%d M%d\n",
-                        numberCurrentJob,   0, SC_STATUS_ALL_POS, MULTI_ALL_JNT_MODE);
-
+                        numberCurrentJob, 0, SC_MOVE, CARTESIAN_MODE);
 
         for(int i=0; i<jN; i++) {
             socketHandler->write(newJob[i].get());
@@ -874,11 +859,6 @@ void MainWindow::action_moveLinear()
 //        }
         if(diffEE>=.1 ){
 
-//            newJob[0].packf("J%d N%d G%d M%d W%5.3f X%5.3f Y%5.3f Z%5.3f V%5.3f A%5.3f\n",
-//                            numberCurrentJob, 1, SC_SET_SPEED, 3,
-//                            robotKin.param.Px, robotKin.param.th1*RTOD, robotKin.param.th2*RTOD, selectedTargetObj->param.posTargetEE[2],
-//                    150.0, 150.0);
-
 
             newJob[0].packf("J%d N%d G%d M%d W%5.3f X%5.3f Y%5.3f Z%5.3f V%5.3f A%5.3f B%5.3f C%5.3f\n",
                             numberCurrentJob, 1, SC_GEN_EELINEAR, CARTESIAN_MODE,
@@ -891,9 +871,6 @@ void MainWindow::action_moveLinear()
 
             newJob[1].packf("J%d N%d G%d M%d\n",
                             numberCurrentJob, 0, SC_MOVE, CARTESIAN_MODE);
-
-//            newJob[2].packf("J%d N%d G%d M%d\n",
-//                            numberCurrentJob, 0, SC_STATUS_ALL_POS, MULTI_ALL_JNT_MODE);
 
 
             for(int i=0; i<jN; i++) {
@@ -919,8 +896,7 @@ void MainWindow::action_moveMultiJointRobot()
                     robotKin.param.Px, robotKin.param.th1*RTOD, robotKin.param.th2*RTOD, robotKin.param.Pz,  jointSpeedPercent, jointAccPercent);
     newJob[1].packf("J%d N%d G%d M%d\n",
                     numberCurrentJob, 0, SC_MOVE, MULTI_ALL_JNT_MODE);
-//    newJob[2].packf("J%d N%d G%d M%d\n",
-//                    numberCurrentJob,   0, SC_STATUS_ALL_POS, MULTI_ALL_JNT_MODE);
+
     for(int i=0; i<jN; i++) {
         socketHandler->write(newJob[i].get());
     }
@@ -940,8 +916,7 @@ void MainWindow::action_moveMultiJointRobot(double X, double R1, double R2, doub
                     X, R1*RTOD, R2*RTOD, Z, jointSpeedPercent, jointAccPercent);
     newJob[1].packf("J%d N%d G%d M%d\n",
                     numberCurrentJob, 0, SC_MOVE, MULTI_ALL_JNT_MODE);
-//    newJob[2].packf("J%d N%d G%d M%d\n",
-//                    numberCurrentJob,   0, SC_STATUS_ALL_POS, MULTI_ALL_JNT_MODE);
+
     for(int i=0; i<jN; i++) {
         socketHandler->write(newJob[i].get());
     }
