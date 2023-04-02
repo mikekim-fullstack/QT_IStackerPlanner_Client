@@ -11,8 +11,10 @@ extern MKZoeRobotKin robotKin;
 extern QByteArray qss_data;
 extern MainWindow *g_MainWindow;
 
+QmkSetupVLayout *g_SetupLayout=nullptr;
 QmkSetupVLayout::QmkSetupVLayout(QWidget *parent) : QVBoxLayout(parent)
 {
+    g_SetupLayout=this;
     QVBoxLayout *mainVLayout = new QVBoxLayout;
     QGroupBox * groupBox = new QGroupBox;
     QVBoxLayout *groupBoxVLayout = new QVBoxLayout;
@@ -64,6 +66,8 @@ QmkSetupVLayout::QmkSetupVLayout(QWidget *parent) : QVBoxLayout(parent)
     connect(buttonsHoming[1], &QmkPushButton::mkClicked, this, &QmkSetupVLayout::clickedButton_homingR1);
     connect(buttonsHoming[2], &QmkPushButton::mkClicked, this, &QmkSetupVLayout::clickedButton_homingX);
     connect(buttonsHoming[3], &QmkPushButton::mkClicked, this, &QmkSetupVLayout::clickedButton_homingZ);
+
+
 }
 
 void QmkSetupVLayout::clickedButton_connectToServer()
@@ -91,14 +95,15 @@ void QmkSetupVLayout::clickedButton_turnPowerOnOff()
 
 void QmkSetupVLayout::clickedButton_pause()
 {
-    bPause =!bPause;
-    if(bPause){
-        buttonsRobotOperation[3]->setText(" Pause ");
+//    bPause =!bPause;
+//    if(bPause){
+//        buttonsRobotOperation[3]->setText(" Pause ");
 
-    }
-    else{
-        buttonsRobotOperation[3]->setText("Resume");
-    }
+//    }
+//    else{
+//        buttonsRobotOperation[3]->setText("Resume");
+//    }
+    cout<<"clickedButton_pause()"<<endl;
     g_MainWindow->action_pause(bPause);
 
 //    g_MainWindow->action_stop();

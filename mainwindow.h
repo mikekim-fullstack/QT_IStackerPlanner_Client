@@ -62,6 +62,7 @@ public:
     double jointSpeedPercent=100;
     double jointAccPercent=100;
     MKZoeRobotKin tmpRobotKin;
+    int statusPauseMode=0;
 public:
 
    QHBoxLayout *mainHLayout ;
@@ -130,12 +131,16 @@ public:
     void action_setPosition();
     void action_stop();
     void action_pause(int bPause);
+    void action_getPauseStatus();
     void action_savePos();
    // void action_getPos();
     void action_testMotion();
+public:
+    bool checkPauseState();
  signals:
     void widgetVisibilityChanged(bool state);
 public slots:
+    void initState();
     void processSocketResponseTimer();
     void processSocketJobSchedulerTimer();
 

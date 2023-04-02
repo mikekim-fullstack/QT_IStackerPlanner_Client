@@ -41,7 +41,10 @@
 #include <QLabel>
 #include <QSpacerItem>
 #include <QScrollArea>
-
+#include "qmksetupvlayout.h"
+#define SEL_NONE 0
+#define SEL_PAUSE 1
+#define SEL_RESUME 2
 //#define SERVER_ADDR "10.88.111.19"// UBUNTU
 //#define SERVER_ADDR "10.88.111.6"//"10.88.111.3" // IMAC
 #define SERVER_ADDR "127.0.0.1"// Local host
@@ -56,6 +59,8 @@ MainWindow *g_MainWindow=nullptr;
 extern MapObjActor   *selectedTargetObj;
 static void runJointInterMove_timer();
 static void runLinearMove_timer();
+
+extern QmkSetupVLayout *g_SetupLayout;
 MainWindow::MainWindow(QWidget *parent): QWidget(parent)
 {
     const bool bTEST=false;
@@ -327,7 +332,7 @@ MainWindow::MainWindow(QWidget *parent): QWidget(parent)
 
     connect(&socketResponseTimer, &QTimer::timeout, this, &MainWindow::processSocketResponseTimer);
     connect(&socketJobSchedulerTimer, &QTimer::timeout, this, &MainWindow::processSocketJobSchedulerTimer);
-    connect(socketHandler, &mkSocketClient::connectedSignal, this, &MainWindow::action_getAllPosition);
+    connect(socketHandler, &mkSocketClient::connectedSignal, this, &MainWindow::initState);
     socketResponseTimer.start(1);
     socketResponseTimer.start(20);
 }
@@ -505,6 +510,9 @@ void MainWindow::connectToServer()
 ///// Begining of Action for robot functions...
 void MainWindow::action_rebootRobot()
 {
+    if(checkPauseState()) return;
+
+
     if(!socketHandler->bSocketOpen) {
         cout<<"Socket is not open!\n"<<flush;
         return;
@@ -521,6 +529,9 @@ void MainWindow::action_rebootRobot()
 
 void MainWindow::action_controlPower(bool bPowerOn)
 {
+    if(checkPauseState()) return;
+
+
     if(!socketHandler->bSocketOpen) {
         cout<<"Socket is not open!\n"<<flush;
         return;
@@ -536,6 +547,8 @@ void MainWindow::action_controlPower(bool bPowerOn)
 
 void MainWindow::action_setZeroEncoder(int axisID)
 {
+    if(checkPauseState()) return;
+
     if(!socketHandler->bSocketOpen) {
         cout<<"Socket is not open!\n"<<flush;
         return;
@@ -549,6 +562,8 @@ void MainWindow::action_setZeroEncoder(int axisID)
 
 void MainWindow::action_homingRobot(int axisID)
 {
+    if(checkPauseState()) return;
+
     if(!socketHandler->bSocketOpen) {
         cout<<"Socket is not open!\n"<<flush;
         return;
@@ -607,6 +622,8 @@ void MainWindow::action_homingRobot(int axisID)
 
 void MainWindow::action_getEncoderValue(int axisID)
 {
+    if(checkPauseState()) return;
+
     if(!socketHandler->bSocketOpen) {
         cout<<"Socket is not open!\n"<<flush;
         return;
@@ -619,6 +636,9 @@ void MainWindow::action_getEncoderValue(int axisID)
 }
 void MainWindow::action_moveSingleJointRobot(int axisID, double vel)
 {
+    if(checkPauseState()) return;
+
+
     if(!socketHandler->bSocketOpen){
         return;
     }
@@ -639,6 +659,8 @@ void MainWindow::action_moveSingleJointRobot(int axisID, double vel)
 }
 void MainWindow::action_moveSingleJointRobot(int axisID, double pos[], double vel)
 {
+    if(checkPauseState()) return;
+
     if(!socketHandler->bSocketOpen){
         return;
     }
@@ -660,6 +682,9 @@ void MainWindow::action_moveSingleJointRobot(int axisID, double pos[], double ve
 
 void MainWindow::action_moveCircle(CircleProfile &circleProfile)
 {
+    if(checkPauseState()) return;
+
+
     if(!socketHandler->bSocketOpen) {
         cout<<"Socket is not open!\n"<<flush;
         return;
@@ -694,6 +719,9 @@ void MainWindow::action_moveCircle(CircleProfile &circleProfile)
 
 void MainWindow::action_moveSpiral(SpiralProfile &spiralProfile)
 {
+    if(checkPauseState()) return;
+
+
     if(!socketHandler->bSocketOpen) {
         cout<<"Socket is not open!\n"<<flush;
         return;
@@ -734,6 +762,9 @@ void MainWindow::action_moveSpiral(SpiralProfile &spiralProfile)
 
 void MainWindow::action_orderSequence(int orderID)
 {
+    if(checkPauseState()) return;
+
+
     if(!socketHandler->bSocketOpen) {
         cout<<"Socket is not open!\n"<<flush;
         return;
@@ -750,6 +781,9 @@ void MainWindow::action_orderSequence(int orderID)
 
 void MainWindow::action_dropCup()
 {
+    if(checkPauseState()) return;
+
+
     if(!socketHandler->bSocketOpen) {
         cout<<"Socket is not open!\n"<<flush;
         return;
@@ -767,6 +801,9 @@ void MainWindow::action_dropCup()
 
 void MainWindow::action_moveEERotate()
 {
+    if(checkPauseState()) return;
+
+
     if(!socketHandler->bSocketOpen) {
         cout<<"Socket is not open!\n"<<flush;
         return;
@@ -805,6 +842,8 @@ void MainWindow::action_moveEERotate()
 
 void MainWindow::action_moveLinear()
 {
+    if(checkPauseState()) return;
+
     if(!socketHandler->bSocketOpen) {
         cout<<"Socket is not open!\n"<<flush;
         return;
@@ -884,6 +923,8 @@ void MainWindow::action_moveLinear()
 }
 void MainWindow::action_moveMultiJointRobot()
 {
+    if(checkPauseState()) return;
+
     if(!socketHandler->bSocketOpen) {
         cout<<"Socket is not open!\n"<<flush;
         return;
@@ -904,6 +945,9 @@ void MainWindow::action_moveMultiJointRobot()
 
 void MainWindow::action_moveMultiJointRobot(double X, double R1, double R2, double Z)
 {
+    if(checkPauseState()) return;
+
+
     if(!socketHandler->bSocketOpen) {
         cout<<"Socket is not open!\n"<<flush;
         return;
@@ -924,6 +968,9 @@ void MainWindow::action_moveMultiJointRobot(double X, double R1, double R2, doub
 
 void MainWindow::action_moveAllTargetRobot()
 {
+    if(checkPauseState()) return;
+
+
     if(!socketHandler->bSocketOpen) {
         cout<<"Socket is not open!\n"<<flush;
         return;
@@ -964,18 +1011,21 @@ void MainWindow::action_moveAllTargetRobot()
 
 void MainWindow::action_getAllPosition()
 {
+    if(checkPauseState()) return;
+
     if(!socketHandler->bSocketOpen) {
         cout<<"Socket is not open!\n"<<flush;
         return;
     }
     PacketJobs newJob;
-    numberCurrentJob++;
-    newJob.packf("J%d N%d G%d M%d\n",  numberCurrentJob,   0, SC_STATUS_ALL_POS, 1);
+    newJob.packf("J%d N%d G%d M%d\n",  ++numberCurrentJob,   0, SC_STATUS_ALL_POS, 1);
     socketHandler->write(newJob.get());
 }
 
 void MainWindow::action_setPosition()
 {
+    if(checkPauseState()) return;
+
     if(!socketHandler->bSocketOpen) {
         cout<<"Socket is not open!\n"<<flush;
         return;
@@ -988,6 +1038,8 @@ void MainWindow::action_setPosition()
 
 void MainWindow::action_stop()
 {
+    if(checkPauseState()) return;
+
     if(!socketHandler->bSocketOpen) {
         cout<<"Socket is not open!\n"<<flush;
         return;
@@ -1006,17 +1058,43 @@ void MainWindow::action_stop()
 
 void MainWindow::action_pause(int bPause)
 {
+    cout<<"action_pause:"<<statusPauseMode<<endl;
     if(!socketHandler->bSocketOpen) {
         cout<<"Socket is not open!\n"<<flush;
         return;
     }
 
-    int mode = bPause?1:2;// 1: pause, 2: resume
+    int status = SEL_NONE;
+
+    if(statusPauseMode==SEL_NONE){
+        status=SEL_PAUSE;
+    }
+    else if(statusPauseMode==SEL_PAUSE){
+        status=SEL_RESUME;
+    }
+//    statusPauseMode = bPause?SEL_PAUSE:SEL_RESUME;// 1: pause, 2: resume
 
     const int jN=1;
     PacketJobs newJob[jN];
 
-    newJob[0].packf("J%d N%d G%d M%d\n", ++numberCurrentJob,   0, SC_PAUSE, mode);
+    newJob[0].packf("J%d N%d G%d M%d\n", ++numberCurrentJob,   0, SC_PAUSE, status);
+
+//    if(statusPauseMode==SEL_RESUME) statusPauseMode=SEL_NONE;
+    for(int i=0; i<jN; i++) {
+        socketHandler->write(newJob[i].get());
+    }
+}
+
+void MainWindow::action_getPauseStatus()
+{
+    if(!socketHandler->bSocketOpen) {
+        cout<<"Socket is not open!\n"<<flush;
+        return;
+    }
+    const int jN=1;
+    PacketJobs newJob[jN];
+
+    newJob[0].packf("J%d N%d G%d\n", ++numberCurrentJob,   0, SC_PAUSE_STATUS);
 
     for(int i=0; i<jN; i++) {
         socketHandler->write(newJob[i].get());
@@ -1025,6 +1103,8 @@ void MainWindow::action_pause(int bPause)
 
 void MainWindow::action_savePos()
 {
+    if(checkPauseState()) return;
+
     if(!socketHandler->bSocketOpen) {
         cout<<"Socket is not open!\n"<<flush;
         return;
@@ -1038,6 +1118,8 @@ void MainWindow::action_savePos()
 
 void MainWindow::action_testMotion()
 {
+    if(checkPauseState()) return;
+
     int sel=1;
     if(sel==1)
     {
@@ -1049,7 +1131,7 @@ void MainWindow::action_testMotion()
         numberCurrentJob++;
         testCurrentJob=numberCurrentJob;
         int count=0;
-        int n=20;
+        int n=4;
         MapObjActor *objActorFirst = renderRobotFront->objTarget[0];
         for( MapObjActor * objActor:renderRobotFront->objTarget) {
             //objActor->param.posTargetEE;//EEx,EEy,EEz,EEth;
@@ -1083,8 +1165,6 @@ void MainWindow::action_testMotion()
             else
                 newJob[1].packf("J%d N%d G%d M%d\n",
                                 numberCurrentJob, ++numSequence, SC_MOVE, MULTI_ALL_JNT_MODE);
-
-            numSequence++;
 
             for(int i=0; i<jN; i++) {
                 // Wait for 10 sec before running the next motion...
@@ -1133,6 +1213,19 @@ void MainWindow::action_testMotion()
 
     }
 }
+
+bool MainWindow::checkPauseState()
+{
+    cout<<"statusPauseMode: "<<statusPauseMode<<endl<<flush;
+    if(statusPauseMode!=SEL_NONE) return true;// if pause is selected, return;
+    return false;
+}
+
+void MainWindow::initState()
+{
+//    action_getAllPosition();
+//    action_getPauseStatus();
+}
 // End of Action functions
 ///////////////////////////////////////////////////////////////////////////////////
 void MainWindow::processSocketResponseTimer()
@@ -1166,6 +1259,23 @@ void MainWindow::processSocketResponseTimer()
 
             cout<<"I got the job done response..."<<endl<<flush;
             break;
+        case RC_PAUSE_STATUS:{
+            if( socketHandler->ringBuffer.codeSeen('S') ) {
+                statusPauseMode = (int)socketHandler->ringBuffer.codeValue();
+                if(g_SetupLayout){
+
+                            if(statusPauseMode==SEL_NONE){
+                                g_SetupLayout->buttonsRobotOperation[3]->setText(" Pause ");
+
+                            }
+                            else if(statusPauseMode==SEL_PAUSE || statusPauseMode==SEL_RESUME){
+                                g_SetupLayout->buttonsRobotOperation[3]->setText("Resume");
+                            }
+                }
+                cout<<"Response: RC_PAUSE_STATUS:"<<statusPauseMode<<endl<<flush;
+            }
+            break;
+        }
         case RC_ORDER_DONE:
             {
                 cout<<"Received data from Server:["<<QDateTime::currentSecsSinceEpoch()<<"]:" <<socketHandler->ringBuffer.getCmd()<<endl<<flush;
@@ -1177,17 +1287,18 @@ void MainWindow::processSocketResponseTimer()
                 if(socketHandler->ringBuffer.codeSeen('N')){
                     N = socketHandler->ringBuffer.codeValue();
                 }
-                qDebug()<<"J="<<J<<", N="<<N<<"\n";
+//                qDebug()<<"J="<<J<<", N="<<N<<"\n";
                 if(J==testCurrentJob && N==0){
 
                     // Wait for 1 sec before running the next motion...
                     QTime dieTime= QTime::currentTime().addMSecs(1000);
                     while (QTime::currentTime() < dieTime) QCoreApplication::processEvents(QEventLoop::AllEvents, 20);
 
-                    action_testMotion();
+//                    action_testMotion();
                     qDebug()<<"ORDER Done!!\n";
 
                  }
+                break;
               }
 
         }
@@ -1197,6 +1308,7 @@ void MainWindow::processSocketResponseTimer()
         action_rebootRobot();
         action_setPosition();
         action_getAllPosition();
+        action_getPauseStatus();
     }
 //    if(codeValue==RC_ORDER_DONE)
 
