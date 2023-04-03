@@ -695,6 +695,14 @@ void MainWindow::action_moveCircle(CircleProfile &circleProfile)
                                            circleProfile.cenPosY, //EEy
                                            circleProfile.EETheta*DTOR //EETh
                                            );//EEZ
+
+    // J: Job ID
+    // N: Sequence Number
+    // G: SEND_CMD Command (defined mkglobalclass.h)
+    // M: ACTION_MODE Action Mode (defined mkglobalclass.h)
+    // W: traget EEth [rad]   - data[0]
+    // X: EE speed [deg/sec]  - data[1]
+    // Y: Arc angle[deg]      - data[2]
     if(ret==false) {
         cout<<"IK Error "<<endl;
         return;
@@ -704,9 +712,11 @@ void MainWindow::action_moveCircle(CircleProfile &circleProfile)
         PacketJobs newJob[jN];
         numberCurrentJob++;
 
-        newJob[0].packf("J%d N%d G%d M%d W%5.3f X%5.3f Y%5.3f Z%5.3f V%5.3f A%5.3f\n",
+        newJob[0].packf("J%d N%d G%d M%d W%5.3f X%5.3f Y%5.3f\n",
                         numberCurrentJob, 1, SC_GEN_CIRCLE, CIRCLE_MODE,
-                        circleProfile.speed, circleProfile.radius,  circleProfile.cenPosX, circleProfile.cenPosY,  circleProfile.EETheta, circleProfile.arcAng);
+                        circleProfile.speed,
+                        circleProfile.radius,
+                        circleProfile.arcAng);
         newJob[1].packf("J%d N%d G%d M%d\n",
                         numberCurrentJob, 0, SC_MOVE, CIRCLE_MODE);
 
@@ -738,15 +748,26 @@ void MainWindow::action_moveSpiral(SpiralProfile &spiralProfile)
         cout<<"Exceed joint limit: "<<ret<<endl;
         return;
     }
+
+    // J: Job ID
+    // N: Sequence Number
+    // G: SEND_CMD Command (defined mkglobalclass.h)
+    // M: ACTION_MODE Action Mode (defined mkglobalclass.h)
+    // W: traget EEth [rad]   - data[0]
+    // X: EE speed [deg/sec]  - data[1]
+    // Y: Arc angle[deg]      - data[2]
+    // Z: heightZ[mm]         - data[3]
     if(rec)
     {
         const int jN=2;
         PacketJobs newJob[jN];
         numberCurrentJob++;
-        newJob[0].packf("J%d N%d G%d M%d W%5.3f X%5.3f Y%5.3f Z%5.3f V%5.3f A%5.3f B%5.3f C%5.3f\n",
+        newJob[0].packf("J%d N%d G%d M%d W%5.3f X%5.3f Y%5.3f Z%5.3f\n",
                         numberCurrentJob, 1, SC_GEN_SPIRAL, CIRCLE_MODE,
-                        spiralProfile.speed, spiralProfile.radius,  spiralProfile.cenPosX, spiralProfile.cenPosY,
-                        spiralProfile.EETheta, spiralProfile.arcAng, originalPz, spiralProfile.heightZ);
+                        spiralProfile.speed,
+                        spiralProfile.radius,
+                        spiralProfile.arcAng,
+                        spiralProfile.heightZ);
         newJob[1].packf("J%d N%d G%d M%d\n",
                         numberCurrentJob, 0, SC_MOVE, CIRCLE_MODE);
 
@@ -818,16 +839,21 @@ void MainWindow::action_moveEERotate()
                                            robotKin.curEEy, //EEy
                                            selectedTargetObj->param.posTargetEE[3], //target EETh
                                            robotKin.curZ);//EEZ
+    // J: Job ID
+    // N: Sequence Number
+    // G: SEND_CMD Command (defined mkglobalclass.h)
+    // M: ACTION_MODE Action Mode (defined mkglobalclass.h)
+    // W: traget EEth [rad]   - data[0]
+    // X: EE speed [deg/sec]   - data[1]
+
     if(rec) {
 
         const int jN=2;
         PacketJobs newJob[jN];
         numberCurrentJob++;
-        newJob[0].packf("J%d N%d G%d M%d W%5.3f X%5.3f Y%5.3f Z%5.3f V%5.3f\n",
+        newJob[0].packf("J%d N%d G%d M%d W%5.3f X%5.3f\n",
                         numberCurrentJob, 1, SC_GEN_EEROTATION, CARTESIAN_MODE,
-                        robotKin.curEEx,
-                        robotKin.curEEy,
-                        robotKin.curEEth, selectedTargetObj->param.posTargetEE[3],// EEth[start, end]//[rad]
+                        selectedTargetObj->param.posTargetEE[3],// EEth[start, end]//[rad]
                         40*DTOR);//  speed[rad/sec]
         newJob[0].print();
         newJob[1].packf("J%d N%d G%d M%d\n",
@@ -867,14 +893,11 @@ void MainWindow::action_moveLinear()
         // N: Sequence Number
         // G: SEND_CMD Command (defined mkglobalclass.h)
         // M: ACTION_MODE Action Mode (defined mkglobalclass.h)
-        // W: current EEx position[mm]   - data[0]
-        // X: traget EEx position[mm]    - data[1]
-        // Y: current EEy position[mm]   - data[2]
-        // Z: traget EEy position[mm]    - data[3]
-        // V: current EEz position[mm]   - data[4]
-        // A: target EEz position[mm]    - data[5]
-        // B: EEtheta [rad]              - data[6]
-        // C: EE speed [mm/sec]          - data[7]
+        // W: traget EEx position[mm]   - data[0]
+        // X: traget EEy position[mm]   - data[1]
+        // Y: target EEz position[mm]   - data[2]
+        // Z: EE speed [mm/sec]         - data[3]
+
 
         double diffX = robotKin.curEEx - selectedTargetObj->param.posTargetEE[0];
         double diffY = robotKin.curEEy - selectedTargetObj->param.posTargetEE[1];
@@ -899,12 +922,12 @@ void MainWindow::action_moveLinear()
         if(diffEE>=.1 ){
 
 
-            newJob[0].packf("J%d N%d G%d M%d W%5.3f X%5.3f Y%5.3f Z%5.3f V%5.3f A%5.3f B%5.3f C%5.3f\n",
+            newJob[0].packf("J%d N%d G%d M%d W%5.3f X%5.3f Y%5.3f Z%5.3f\n",
                             numberCurrentJob, 1, SC_GEN_EELINEAR, CARTESIAN_MODE,
-                            robotKin.curEEx, selectedTargetObj->param.posTargetEE[0],// EEx[start, end]
-                            robotKin.curEEy, selectedTargetObj->param.posTargetEE[1],// EEy[start, end]
-                            robotKin.curZ, selectedTargetObj->param.posTargetEE[2],// EEz[start, end]
-                            robotKin.curEEth, 150.0);// EETheta, speed
+                            selectedTargetObj->param.posTargetEE[0],// EEx[start, end]
+                            selectedTargetObj->param.posTargetEE[1],// EEy[start, end]
+                            selectedTargetObj->param.posTargetEE[2],// EEz[start, end]
+                            150.0);// EETheta, speed
     //        newJob[0].print();
 
 
