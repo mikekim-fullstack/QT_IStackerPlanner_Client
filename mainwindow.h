@@ -109,6 +109,9 @@ public:
     void updateJointValue();
     void stopAllTimers();
     void connectToServer();
+    MapObjActor * findTarget(const char *name);
+
+
     void action_rebootRobot();
     void action_controlPower(bool bPowerOn);
     void action_setZeroEncoder(int axisID);

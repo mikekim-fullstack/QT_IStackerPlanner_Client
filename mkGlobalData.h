@@ -103,7 +103,10 @@ public:
         return getOpTypeByValue(OP_MOVE, moveType);
     }
 
-
+    void print()
+    {
+        cout<<"name:"<<name<<", EEx:"<<posTargetEE[0]<<", EEy:"<<posTargetEE[1]<<", EEz:"<<posTargetEE[2]<<", EEth:"<<posTargetEE[3]<<endl;
+    }
 public:
     MotionParam(){ }
     MotionParam( MotionParam &other)

@@ -1138,12 +1138,22 @@ void MainWindow::action_savePos()
     newJob.packf("J%d N%d G%d\n", numberCurrentJob,   0, SC_SAVE_POS);
     socketHandler->write(newJob.get());
 }
-
+ MapObjActor * MainWindow::findTarget(const char *name)
+ {
+     int nSize = renderRobotFront->objTarget.size();
+     for(int i=0; i<nSize; i++){
+         MapObjActor *objActor = renderRobotFront->objTarget[i];
+         if(strcmp(objActor->param.name,name)==0){
+             return objActor;
+         }
+     }
+     return nullptr;
+ }
 void MainWindow::action_testMotion()
 {
     if(checkPauseState()) return;
 
-    int sel=1;
+    int sel=2;
     if(sel==1)
     {
         if(!socketHandler->bSocketOpen) {
@@ -1189,6 +1199,7 @@ void MainWindow::action_testMotion()
                 newJob[1].packf("J%d N%d G%d M%d\n",
                                 numberCurrentJob, ++numSequence, SC_MOVE, MULTI_ALL_JNT_MODE);
 
+            // ...Sending packets to the controller server. ...
             for(int i=0; i<jN; i++) {
                 // Wait for 10 sec before running the next motion...
                 //            QTime dieTime= QTime::currentTime().addMSecs(50);
@@ -1206,6 +1217,105 @@ void MainWindow::action_testMotion()
     }
     else if(sel==2)
     {
+        const char *targetNames[]={"T_CupPlace_1_Entrance", "T_Place1_1",
+                                   "T_CupPlace_2_Entrance", "T_CupPlace_2",
+                                   "T_Cup_Drop_Entry",      "T_Cup_Drop_Place",
+                                   "T_TAG67_CENTER_Y_600",  "T_CoffeePlace",
+                                   "T_CupPlace_1_Entrance" // return to first place...
+                                  };
+
+
+        int numSequence=0;
+
+        for(int i=0; i<8+1; i+=2){
+            MapObjActor * objActor0=nullptr;
+            objActor0 = findTarget(targetNames[i]);
+            // ... Joint Motion before the linear motion ...
+            if(objActor0){
+                objActor0->param.print();
+                MKZoeRobotKin testRobotKin(robotKin);
+                bool rec = testRobotKin.invKinEE_W_XYRZ(objActor0->param.posTargetEE[0],//EEx
+                        objActor0->param.posTargetEE[1], //EEy
+                        objActor0->param.posTargetEE[3], //EETh
+                        objActor0->param.posTargetEE[2]);//EEZ
+                //            if(!rec) continue;
+                const int jN=2;
+                PacketJobs newJob[jN];
+                newJob[0].packf("J%d N%d G%d M%d W%5.3f X%5.3f Y%5.3f Z%5.3f V%5.3f A%5.3f\n",
+                                numberCurrentJob, ++numSequence, SC_SET_SPEED, MULTI_ALL_JNT_MODE,
+                                testRobotKin.param.Px, testRobotKin.param.th1*RTOD,
+                                testRobotKin.param.th2*RTOD, testRobotKin.param.Pz,  jointSpeedPercent, jointAccPercent);
+                ++numSequence;
+                if(i==8) numSequence=0; // ending of this job...
+                newJob[1].packf("J%d N%d G%d M%d\n",
+                                numberCurrentJob, numSequence, SC_MOVE, MULTI_ALL_JNT_MODE);
+
+                // ...Sending packets to the controller server. ...
+                for(int j=0; j<jN; j++) {
+                    socketHandler->write(newJob[j].get());
+                    // delay 20ms
+                    QTime dieTime= QTime::currentTime().addMSecs(20);
+                    while (QTime::currentTime() < dieTime)
+                        QCoreApplication::processEvents(QEventLoop::AllEvents, 20);
+                }
+                if(i==8) return;
+
+            }
+
+            // ... Linear foreward motion get started ...
+            MapObjActor * objActor1=nullptr;
+            objActor1 = findTarget(targetNames[i+1]);
+
+            if(objActor1){
+                objActor1->param.print();
+
+                const int jN=2;
+                PacketJobs newJob[jN];
+                newJob[0].packf("J%d N%d G%d M%d W%5.3f X%5.3f Y%5.3f Z%5.3f\n",
+                                numberCurrentJob, ++numSequence, SC_GEN_EELINEAR, CARTESIAN_MODE,
+                                objActor1->param.posTargetEE[0],// EEx
+                        objActor1->param.posTargetEE[1],// EEy
+                        objActor1->param.posTargetEE[2],// EEz
+                        350.0);// EETheta, speed
+
+                newJob[1].packf("J%d N%d G%d M%d\n",
+                                numberCurrentJob, ++numSequence, SC_MOVE, CARTESIAN_MODE);
+                // ...Sending packets to the controller server. ...
+                for(int j=0; j<jN; j++) {
+                    socketHandler->write(newJob[j].get());
+                    // delay 20ms
+                    QTime dieTime= QTime::currentTime().addMSecs(20);
+                    while (QTime::currentTime() < dieTime)
+                        QCoreApplication::processEvents(QEventLoop::AllEvents, 20);
+                }
+
+            }
+            // ... Linear backword motion get started ...
+            if(objActor0){
+                objActor0->param.print();
+
+                const int jN=2;
+                PacketJobs newJob[jN];
+                newJob[0].packf("J%d N%d G%d M%d W%5.3f X%5.3f Y%5.3f Z%5.3f\n",
+                                numberCurrentJob, ++numSequence, SC_GEN_EELINEAR, CARTESIAN_MODE,
+                                objActor0->param.posTargetEE[0],// EEx
+                        objActor0->param.posTargetEE[1],// EEy
+                        objActor0->param.posTargetEE[2],// EEz
+                        350.0);// EETheta, speed
+
+                newJob[1].packf("J%d N%d G%d M%d\n",
+                                numberCurrentJob, ++numSequence, SC_MOVE, CARTESIAN_MODE);
+                // ...Sending packets to the controller server. ...
+                for(int j=0; j<jN; j++) {
+                    socketHandler->write(newJob[j].get());
+                    // delay 20ms
+                    QTime dieTime= QTime::currentTime().addMSecs(20);
+                    while (QTime::currentTime() < dieTime)
+                        QCoreApplication::processEvents(QEventLoop::AllEvents, 20);
+                }
+            }
+        }
+
         // 0. ... Joint Motion ...
         // T_CupPlace_1_Entrance
 
